@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MQI · Confirm</title>
+  <style>
+    :root {
+      --bg: #f9f9f9;
+      --surface: #ffffff;
+      --surface-subtle: #f3f3f3;
+      --sidebar: #f9f9f9;
+      --ink: #1f1f1f;
+      --muted: #676767;
+      --line: #d5d5d5;
+      --brand: #e4002b;
+      --accent: #0f7eb1;
+      --brand-soft: #fdf5f6;
+      --success: #0d8758;
+      --success-soft: #ecfdf6;
+      --warn: #a28400;
+      --warn-soft: #fdf9e7;
+      --danger: #e4002b;
+      --danger-soft: #fbe2e7;
+      --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.04);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: "Helvetica Now Text", "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--ink); }
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea { font: inherit; }
+    .app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+    .sidebar { background: var(--sidebar); border-right: 1px solid var(--line); padding: 14px 12px 24px; position: sticky; top: 0; height: 100vh; overflow: auto; }
+    .sidebar-header { display: flex; align-items: center; gap: 10px; padding: 8px 10px 16px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+    .logo { width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, #e4002b, #ff2e54); display: grid; place-items: center; color: white; font-size: 12px; font-weight: 800; letter-spacing: .04em; }
+    .sidebar-title { font-size: 14px; font-weight: 800; } .sidebar-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .search { margin: 0 8px 14px; border: 1px solid var(--line); background: white; border-radius: 8px; padding: 10px 12px; color: var(--muted); font-size: 13px; }
+    .nav-group { margin: 12px 0; } .nav-label { padding: 8px 10px 6px; font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .nav-item { display: block; padding: 9px 10px; margin: 2px 4px; border-radius: 8px; font-size: 14px; color: #334155; }
+    .nav-item.active { background: white; color: var(--brand); font-weight: 700; box-shadow: inset 0 0 0 1px var(--line); }
+    .main { min-width: 0; display: flex; flex-direction: column; }
+    .topbar { height: 56px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.92); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: sticky; top: 0; z-index: 10; }
+    .topbar-left { display: flex; align-items: center; gap: 10px; } .badge { display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 999px; background: var(--brand-soft); color: var(--brand); font-size: 12px; font-weight: 700; } .topbar-right { color: var(--muted); font-size: 13px; }
+    .content { padding: 28px 32px 56px; max-width: 1180px; }
+    .breadcrumbs { display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: 13px; margin-bottom: 16px; } .breadcrumbs span.sep { color: #c0c7d1; }
+    h1 { margin: 0 0 8px; font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; }
+    .intro { font-size: 16px; line-height: 1.6; color: #4b5563; max-width: 760px; margin-bottom: 18px; }
+    .state-toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .toolbar-label { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-right: 4px; align-self: center; }
+    .state-chip { display: inline-flex; align-items: center; height: 30px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--line); background: white; color: #334155; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .state-chip.active { background: white; color: var(--accent); border: 1px solid var(--line); border-color: #cddcff; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.45fr) 320px; gap: 16px; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+    .panel-header { padding: 16px 18px; border-bottom: 1px solid var(--line); background: var(--surface-subtle); }
+    .panel-title { font-size: 15px; font-weight: 800; } .panel-body { padding: 18px; }
+    .stats, .grid, .list, .resolution-actions { display: grid; gap: 12px; }
+    .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 16px; }
+    .grid { grid-template-columns: 1fr 1fr; }
+    .metric, .tile, .state, .trace, .resolution-box { border: 1px solid var(--line); border-radius: 10px; background: white; padding: 14px; }
+    .metric .k, .tile .k { display: block; font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+    .metric .v { font-size: 20px; font-weight: 800; }
+    .state.good { background: var(--success-soft); } .state.blocker { background: var(--danger-soft); } .state.warn { background: var(--warn-soft); } .state strong { display: block; margin-bottom: 4px; }
+    .resolution-box { background: #fffdf8; }
+    .resolution-actions { grid-template-columns: 1fr 1fr; margin-top: 12px; }
+    .field { display: grid; gap: 8px; margin-top: 12px; }
+    .field label { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .field input, .field textarea { width: 100%; border: 1px solid var(--line); border-radius: 8px; background: white; padding: 11px 12px; color: var(--ink); outline: none; }
+    .field textarea { min-height: 90px; resize: vertical; }
+    .field input:focus, .field textarea:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(34,84,244,0.12); }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 14px; border-radius: 8px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
+    .btn.primary { background: var(--brand); color: white; } .btn.secondary { background: white; color: var(--accent); border: 1px solid var(--line); }
+    details.trace summary { cursor: pointer; font-weight: 800; list-style: none; } details.trace summary::-webkit-details-marker { display: none; }
+    .hidden { display: none !important; }
+    @media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } }
+    @media (max-width: 980px) { .app { grid-template-columns: 1fr; } .sidebar { position: relative; height: auto; border-right: none; border-bottom: 1px solid var(--line); } .content { padding: 20px; } .stats, .grid, .resolution-actions { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-header"><div class="logo">MQI</div><div><div class="sidebar-title">Quote prototype</div><div class="sidebar-sub">Prototype workflow</div></div></div>
+      <div class="search">Search prototype</div>
+      <div class="nav-group"><div class="nav-label">Workflow</div><a class="nav-item" href="prototype.html">Capture</a><a class="nav-item active" href="requirements-review.html">Confirm</a><a class="nav-item" href="quote-review.html">Optimize</a><a class="nav-item" href="customer-quote.html">Present</a></div>
+      <div class="nav-group"><div class="nav-label">System</div><a class="nav-item" href="design-system.html">MQI System</a><a class="nav-item" href="design-system.json">JSON tokens</a><a class="nav-item" href="index.html">Prototype home</a></div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar"><div class="topbar-left"><strong>Confirm</strong><span class="badge">Blocker-first review</span></div><div class="topbar-right">MQI System</div></div>
+      <div class="content">
+        <div class="breadcrumbs"><span>Workflow</span><span class="sep">/</span><span>Confirm</span></div>
+        <h1>Confirm request</h1>
+        <div class="intro">Review the draft. Fix what blocks the quote. Move on.</div>
+
+        <div class="state-toolbar">
+          <span class="toolbar-label">Confirm states</span>
+          <button class="state-chip active" data-view="blocker">Blocker resolution</button>
+          <button class="state-chip" data-view="ambiguous">Ambiguity review</button>
+          <button class="state-chip" data-view="missing">Missing field correction</button>
+          <button class="state-chip" data-view="source">Source detail</button>
+          <button class="state-chip" data-view="ready">Ready</button>
+        </div>
+
+        <div class="layout">
+          <section class="panel">
+            <div class="panel-header"><div class="panel-title">Normalized request</div></div>
+            <div class="panel-body">
+              <div class="stats">
+                <div class="metric"><span class="k">Readiness</span><div class="v" id="readinessValue">Conditional</div></div>
+                <div class="metric"><span class="k">Review items</span><div class="v" id="reviewItemsValue">1</div></div>
+                <div class="metric"><span class="k">Blockers</span><div class="v" id="blockersValue">1</div></div>
+              </div>
+
+              <div class="grid" id="summaryGrid">
+                <div class="tile"><span class="k">Material</span><span id="materialValue">6061 aluminum</span></div>
+                <div class="tile"><span class="k">Finish</span><span id="finishValue">Black anodize</span></div>
+                <div class="tile"><span class="k">Quantity</span><span id="quantityValue">2,500 units</span></div>
+                <div class="tile"><span class="k">Lead time</span><span id="leadValue">18 days</span></div>
+                <div class="tile"><span class="k">Production</span><span id="productionValue">Domestic preferred</span></div>
+                <div class="tile"><span class="k">Packaging</span><span id="packagingValue">Reseller label ready</span></div>
+              </div>
+
+              <div class="resolution-box" id="resolutionBox">
+                <strong id="resolutionTitle">Resolve blocker</strong>
+                <div id="resolutionBody" style="margin-top:6px; color: var(--muted);">Approved finish alternate is missing.</div>
+                <div id="resolutionFields">
+                  <div class="field">
+                    <label for="resolutionInput">Approved alternate</label>
+                    <input id="resolutionInput" value="Type II anodize acceptable if slot unavailable" />
+                  </div>
+                </div>
+                <div class="resolution-actions" id="resolutionActions">
+                  <button class="btn primary" type="button" id="resolveBtn">Apply</button>
+                  <button class="btn secondary" type="button">Escalate</button>
+                </div>
+              </div>
+
+              <div class="actions"><a class="btn primary" id="optimizeBtn" href="quote-review.html">Optimize quote</a><a class="btn secondary" href="prototype.html">Back</a></div>
+            </div>
+          </section>
+
+          <aside class="panel">
+            <div class="panel-header"><div class="panel-title">Signals</div></div>
+            <div class="panel-body">
+              <div class="list">
+                <div class="state" id="resolvedState"><strong>Resolved</strong>Core request normalized</div>
+                <div class="state" id="reviewState"><strong>Review</strong>One issue requires attention</div>
+                <details class="trace" id="traceBox"><summary>System details</summary><div id="traceText" style="margin-top:8px; color: var(--muted);">Mapped uploads → grouped fields → flagged missing finish alternate.</div></details>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const states = {
+      blocker: {
+        readiness: 'Conditional', items: '1', blockers: '1',
+        resolutionTitle: 'Resolve blocker',
+        resolutionBody: 'Approved finish alternate is missing.',
+        resolutionFieldLabel: 'Approved alternate',
+        resolutionFieldValue: 'Type II anodize acceptable if slot unavailable',
+        resolutionFieldType: 'input',
+        resolved: ['Resolved', 'Core request normalized', 'good'],
+        review: ['Blocker', 'Finish alternate unresolved', 'blocker'],
+        trace: 'Mapped uploads → grouped fields → flagged missing finish alternate.',
+        optimizeEnabled: false
+      },
+      ambiguous: {
+        readiness: 'Review', items: '1', blockers: '0',
+        resolutionTitle: 'Resolve ambiguity',
+        resolutionBody: 'Tolerance note may affect machining time.',
+        resolutionFieldLabel: 'Clarification',
+        resolutionFieldValue: 'Sealing surface tolerance applies only to final mating face',
+        resolutionFieldType: 'textarea',
+        resolved: ['Resolved', 'Core request normalized', 'good'],
+        review: ['Needs review', 'Tolerance note requires human clarification', 'warn'],
+        trace: 'Parsed notes → grouped tolerance callouts → uncertainty remains on machining scope.',
+        optimizeEnabled: true
+      },
+      missing: {
+        readiness: 'Incomplete', items: '1', blockers: '0',
+        resolutionTitle: 'Fill missing field',
+        resolutionBody: 'Lead time target is missing.',
+        resolutionFieldLabel: 'Lead time target',
+        resolutionFieldValue: '18 days',
+        resolutionFieldType: 'input',
+        resolved: ['Resolved', 'Most request fields normalized', 'good'],
+        review: ['Needs input', 'Lead time still missing', 'warn'],
+        trace: 'Source material parsed → no explicit lead time found.',
+        optimizeEnabled: false,
+        leadOverride: 'Missing'
+      },
+      source: {
+        readiness: 'Review', items: '0', blockers: '0',
+        resolutionTitle: 'Source detail',
+        resolutionBody: 'Open the source note that informed the finish and tolerance draft.',
+        resolutionFieldLabel: 'Source excerpt',
+        resolutionFieldValue: 'finish-spec.pdf → anodize finish required unless approved alternate is documented\ntolerance-notes.xlsx → sealing surface tolerance sensitivity called out',
+        resolutionFieldType: 'textarea',
+        resolved: ['Resolved', 'Draft derived from source material', 'good'],
+        review: ['Info', 'Source detail expanded for verification', 'warn'],
+        trace: 'Source excerpts exposed for human verification.',
+        optimizeEnabled: true
+      },
+      ready: {
+        readiness: 'Ready', items: '0', blockers: '0',
+        resolutionTitle: 'Ready to continue',
+        resolutionBody: 'No open blocker remains.',
+        resolutionFieldLabel: 'Confirmation',
+        resolutionFieldValue: 'Approved alternate captured. Requirements safe to optimize.',
+        resolutionFieldType: 'textarea',
+        resolved: ['Resolved', 'Core request normalized', 'good'],
+        review: ['Clear', 'No blocker remains', 'good'],
+        trace: 'Alternate captured → request confirmed → ready for optimization.',
+        optimizeEnabled: true
+      }
+    };
+
+    const chips = [...document.querySelectorAll('.state-chip')];
+    const readinessValue = document.getElementById('readinessValue');
+    const reviewItemsValue = document.getElementById('reviewItemsValue');
+    const blockersValue = document.getElementById('blockersValue');
+    const resolutionTitle = document.getElementById('resolutionTitle');
+    const resolutionBody = document.getElementById('resolutionBody');
+    const resolutionFields = document.getElementById('resolutionFields');
+    const resolveBtn = document.getElementById('resolveBtn');
+    const resolvedState = document.getElementById('resolvedState');
+    const reviewState = document.getElementById('reviewState');
+    const traceText = document.getElementById('traceText');
+    const optimizeBtn = document.getElementById('optimizeBtn');
+    const leadValue = document.getElementById('leadValue');
+
+    function setCard(el, cfg) {
+      el.className = 'state ' + (cfg[2] || '');
+      el.innerHTML = `<strong>${cfg[0]}</strong>${cfg[1]}`;
+    }
+
+    function renderField(label, value, type) {
+      if (type === 'textarea') {
+        return `<div class="field"><label>${label}</label><textarea>${value}</textarea></div>`;
+      }
+      return `<div class="field"><label>${label}</label><input value="${value}" /></div>`;
+    }
+
+    function applyView(name) {
+      const s = states[name];
+      chips.forEach(ch => ch.classList.toggle('active', ch.dataset.view === name));
+      readinessValue.textContent = s.readiness;
+      reviewItemsValue.textContent = s.items;
+      blockersValue.textContent = s.blockers;
+      resolutionTitle.textContent = s.resolutionTitle;
+      resolutionBody.textContent = s.resolutionBody;
+      resolutionFields.innerHTML = renderField(s.resolutionFieldLabel, s.resolutionFieldValue, s.resolutionFieldType);
+      setCard(resolvedState, s.resolved);
+      setCard(reviewState, s.review);
+      traceText.textContent = s.trace;
+      optimizeBtn.style.pointerEvents = s.optimizeEnabled ? 'auto' : 'none';
+      optimizeBtn.style.opacity = s.optimizeEnabled ? '1' : '.45';
+      leadValue.textContent = s.leadOverride || '18 days';
+    }
+
+    chips.forEach(ch => ch.addEventListener('click', () => applyView(ch.dataset.view)));
+    resolveBtn.addEventListener('click', () => applyView('ready'));
+    applyView('blocker');
+  </script>
+</body>
+</html>
