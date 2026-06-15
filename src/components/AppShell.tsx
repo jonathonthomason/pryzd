@@ -24,13 +24,13 @@ export function AppShell() {
   return (
     <div className="app">
       <aside className="sidebar">
-        <div className="sidebar-header">
+        <NavLink to="/" end className="sidebar-header">
           <div className="logo">MQI</div>
           <div>
             <div className="sidebar-title">Decision prototype</div>
             <div className="sidebar-sub">Operator workflow</div>
           </div>
-        </div>
+        </NavLink>
 
         <div className="search">Search prototype</div>
 
