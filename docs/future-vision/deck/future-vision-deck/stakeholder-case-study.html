@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Photon Case Study — Final Deck</title>
+  <style>
+    :root {
+      --surface: #ffffff;
+      --text: #111827;
+      --muted: #667085;
+      --line: #d8e0ee;
+      --accent: #2563eb;
+      --accent-soft: #eaf2ff;
+      --shadow: 0 20px 40px rgba(17, 24, 39, 0.08);
+      --radius: 24px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #f7f9fd 0%, #edf2fb 100%);
+    }
+    .deck {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 32px 20px 64px;
+    }
+    .deck-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+    .deck-header p {
+      margin: 10px 0 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.55;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .slides {
+      display: grid;
+      gap: 28px;
+    }
+    .slide {
+      background: var(--surface);
+      border: 1px solid rgba(216, 224, 238, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      min-height: 720px;
+      padding: 42px 44px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      position: relative;
+      overflow: hidden;
+    }
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--accent), #7aa7ff);
+    }
+    .slide-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    h2 {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    h3 {
+      margin: 10px 0 0;
+      font-size: 42px;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      max-width: 900px;
+    }
+    .subtitle {
+      margin: 12px 0 0;
+      max-width: 860px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.5;
+    }
+    .slide-number {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .title-slide {
+      place-items: center;
+      text-align: center;
+    }
+    .title-slide .content {
+      align-content: center;
+      justify-items: center;
+      gap: 18px;
+      min-height: 100%;
+    }
+    .title-kicker {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .title-slide h1 {
+      margin: 0;
+      font-size: 68px;
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      max-width: 900px;
+    }
+    .title-slide h2 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      color: var(--muted);
+      text-transform: none;
+    }
+    .content {
+      display: grid;
+      gap: 24px;
+      align-content: start;
+    }
+    .two-col {
+      grid-template-columns: 1fr 1fr;
+    }
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 24px;
+      background: linear-gradient(180deg, #fff 0%, #fbfcff 100%);
+    }
+    .panel h4,
+    .callout h4 {
+      margin: 0 0 14px;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      display: grid;
+      gap: 12px;
+      font-size: 22px;
+      line-height: 1.45;
+    }
+    li::marker { color: var(--accent); }
+    .callout {
+      border: 1px solid #d5e2ff;
+      border-radius: 20px;
+      padding: 24px;
+      background: var(--accent-soft);
+    }
+    .callout p {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.35;
+      letter-spacing: -0.03em;
+    }
+    .process-flow {
+      display: grid;
+      grid-template-columns: 1.05fr 0.8fr 1.05fr 0.8fr 1.05fr;
+      gap: 12px;
+      align-items: center;
+    }
+    .process-card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      background: linear-gradient(180deg, #fff 0%, #fbfcff 100%);
+      min-height: 180px;
+    }
+    .process-card h5 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+    .process-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .process-card .icon,
+    .agent-node .icon,
+    .workflow-step .icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+    .process-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .process-pill,
+    .token-chip {
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 12px;
+      color: var(--text);
+    }
+    .process-arrow,
+    .architecture-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .as-is-flow {
+      display: grid;
+      grid-template-columns: 1fr 0.45fr 1fr 0.45fr 1fr 0.45fr 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+    .as-is-card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      background: linear-gradient(180deg, #fff 0%, #fbfcff 100%);
+      min-height: 184px;
+    }
+    .as-is-card h5 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+    }
+    .as-is-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .as-is-inline-note {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      border: 1px solid #d5e2ff;
+      border-radius: 18px;
+      padding: 16px 18px;
+      background: #f8fbff;
+      font-size: 18px;
+      line-height: 1.45;
+      color: #334155;
+    }
+    .as-is-inline-note strong {
+      color: var(--text);
+    }
+    .chain-diagram {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .agent-node {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px 16px;
+      background: linear-gradient(180deg, #fff 0%, #f8fbff 100%);
+      min-height: 128px;
+    }
+    .agent-node h5 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+    .agent-node p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+    .agent-node::after {
+      content: "→";
+      position: absolute;
+      top: 50%;
+      right: -11px;
+      transform: translateY(-50%);
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .agent-node:nth-child(3n)::after,
+    .agent-node:last-child::after {
+      display: none;
+    }
+    .workflow-diagram {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .workflow-step {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px 16px;
+      background: linear-gradient(180deg, #fff 0%, #fbfcff 100%);
+      min-height: 118px;
+    }
+    .workflow-step h5 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+    .workflow-step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .workflow-step .step-index {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .design-system-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .mini-stack {
+      display: grid;
+      gap: 16px;
+    }
+    .token-hero {
+      border: 1px solid #d5e2ff;
+      border-radius: 22px;
+      padding: 22px;
+      background: linear-gradient(180deg, #eef4ff 0%, #f8fbff 100%);
+      box-shadow: 0 10px 24px rgba(37, 99, 235, 0.08);
+    }
+    .token-hero h4 {
+      margin: 0 0 12px;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .token-hero p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .token-groups,
+    .component-showcase,
+    .check-list,
+    .journey-grid,
+    .architecture-stack {
+      display: grid;
+      gap: 14px;
+    }
+    .token-group,
+    .component-card,
+    .decision-panel,
+    .journey-lane,
+    .architecture-layer {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(180deg, #fff 0%, #fbfcff 100%);
+    }
+    .token-group strong,
+    .architecture-layer h5,
+    .journey-lane h5 {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .token-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .swatch {
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      padding: 10px;
+      background: #fff;
+      text-align: center;
+    }
+    .swatch-color {
+      height: 52px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(17,24,39,0.06);
+    }
+    .swatch label,
+    .component-caption {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+      letter-spacing: 0.02em;
+    }
+    .json-sample {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: #0f172a;
+      color: #dbeafe;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      overflow: hidden;
+      white-space: pre-wrap;
+    }
+    .component-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+    .component-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid #d5e2ff;
+    }
+    .journey-layout {
+      display: grid;
+      grid-template-columns: 1.62fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    .journey-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .journey-step {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background: #fff;
+      min-height: 84px;
+    }
+    .journey-step strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+    .journey-step span,
+    .architecture-node span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+    .journey-step::after {
+      content: "→";
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .journey-step:last-child::after {
+      display: none;
+    }
+    .architecture-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .architecture-node {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background: #fff;
+      min-height: 78px;
+    }
+    .architecture-node strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+    .image-frame {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 14px;
+      background: linear-gradient(180deg, #fff 0%, #fbfcff 100%);
+      box-shadow: 0 10px 24px rgba(17, 24, 39, 0.06);
+      cursor: zoom-in;
+    }
+    .image-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 14px;
+    }
+    .image-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.86);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      z-index: 9999;
+    }
+    .image-modal.open { display: flex; }
+    .image-modal-inner {
+      position: relative;
+      width: min(96vw, 1600px);
+      height: min(92vh, 1000px);
+      background: #0b1220;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+    .image-modal-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 14px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .image-modal-toolbar button {
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .image-modal-stage {
+      overflow: auto;
+      background: #0b1220;
+      display: grid;
+      place-items: start center;
+      padding: 24px;
+    }
+    .image-modal-stage img {
+      transform-origin: top center;
+      transition: transform 120ms ease;
+      max-width: none;
+      width: auto;
+      height: auto;
+    }
+    .note {
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    @media (max-width: 960px) {
+      .two-col,
+      .chain-diagram,
+      .design-system-grid,
+      .journey-layout,
+      .process-flow,
+      .as-is-flow,
+      .workflow-diagram,
+      .swatches,
+      .journey-steps,
+      .architecture-row { grid-template-columns: 1fr; }
+      .slide { min-height: auto; }
+      h3 { font-size: 34px; }
+      ul { font-size: 19px; }
+      .callout p { font-size: 24px; }
+      .agent-node::after,
+      .journey-step::after { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <header class="deck-header">
+      <div>
+        <div class="eyebrow">Photon Interview Case Study</div>
+        <h1>AI-First Product Design Case Study</h1>
+        <p>A stakeholder-facing case study about designing human + AI collaboration for faster, safer, margin-protected quoting decisions.</p>
+      </div>
+      <div class="meta">10 slides · stakeholder draft</div>
+    </header>
+
+    <section class="slides">
+      <article class="slide title-slide">
+        <div class="slide-head">
+          <div>
+            <h2>MQI - MARGIN STABILIZATION - SLIDE 1</h2>
+          </div>
+          <div class="slide-number">01</div>
+        </div>
+        <div class="content">
+          <div class="title-kicker">🎯 MQI</div>
+          <h1>MARGIN STABILIZATION</h1>
+          <h2>Align the entire quoting workflow around faster decisions that protect margin.</h2>
+        </div>
+        <div class="note"><strong>Speaker note:</strong> Open with the KPI. Every workflow, decision, and system investment in MQI ties back to reaching and protecting margin stabilization.</div>
+      </article>
+      <article class="slide">
+        <div class="slide-head">
+          <div>
+            <h2>MQI - MARGIN STABILIZATION - SLIDE 2</h2>
+            <h3>Today’s Quote Process Relies on Manual Coordination Across Teams and Data Sources</h3>
+            <p class="subtitle">Before MQI, sales, sourcing, and operations stitch together the quote by hand across inboxes, spreadsheets, supplier replies, and internal approvals.</p>
+          </div>
+          <div class="slide-number">02</div>
+        </div>
+        <div class="content">
+          <div class="as-is-flow">
+            <div class="as-is-card">
+              <div class="icon">📥</div>
+              <h5>Customer request arrives</h5>
+              <p>Sales receives drawings, quantity, finish, timing, and commercial context through email and attachments.</p>
+            </div>
+            <div class="process-arrow">→</div>
+            <div class="as-is-card">
+              <div class="icon">📊</div>
+              <h5>Inputs are reconstructed</h5>
+              <p>Teams manually gather supplier pricing, labor assumptions, freight, inventory, and timing details from separate sources.</p>
+            </div>
+            <div class="process-arrow">→</div>
+            <div class="as-is-card">
+              <div class="icon">🤝</div>
+              <h5>People align on feasibility</h5>
+              <p>Sales, sourcing, and operations trade messages to validate which manufacturer can actually support the order.</p>
+            </div>
+            <div class="process-arrow">→</div>
+            <div class="as-is-card">
+              <div class="icon">🧾</div>
+              <h5>Quote is assembled</h5>
+              <p>The final price is built after manual checks, exceptions, and approval handoffs are reconciled.</p>
+            </div>
+          </div>
+          <div class="as-is-inline-note"><strong>💸 Margin</strong> is rebuilt from supplier cost, labor, freight, and markup inputs while <strong>🏷️ pricing factors</strong> shift and <strong>⏱️ data lag</strong> from spreadsheets, inboxes, and delayed replies slows quote confidence.</div>
+        </div>
+        <div class="note"><strong>Speaker note:</strong> Start with the current business reality first so the rest of the deck clearly reads as a response to the existing operational process.</div>
+      </article>
+
+      <article class="slide">
+        <div class="slide-head">
+          <div>
+            <h2>MQI - MARGIN STABILIZATION - SLIDE 3</h2>
+            <h3>Turning Pricing Volatility Into Faster, Safer Quote Decisions</h3>
+            <p class="subtitle">Manufacturing inputs change constantly, but sales teams still need to move quickly without sacrificing margin protection, trust, or accountability.</p>
+          </div>
+          <div class="slide-number">03</div>
+        </div>
+        <div class="content">
+          <div class="process-flow">
+            <div class="process-card">
+              <div class="icon">🏭</div>
+              <h5>Volatile supplier inputs</h5>
+              <p>Lead times, labor, material cost, and availability shift faster than manual quoting workflows can absorb.</p>
+              <div class="process-list">
+                <span class="process-pill">Lead time</span>
+                <span class="process-pill">Labor cost</span>
+                <span class="process-pill">Material cost</span>
+              </div>
+            </div>
+            <div class="process-arrow">→</div>
+            <div class="process-card">
+              <div class="icon">⚠️</div>
+              <h5>Decision pressure</h5>
+              <p>Sales must coordinate pricing, feasibility, timelines, logistics, and approvals before the quote loses credibility.</p>
+              <div class="process-list">
+                <span class="process-pill">Speed pressure</span>
+                <span class="process-pill">Margin risk</span>
+              </div>
+            </div>
+            <div class="process-arrow">→</div>
+            <div class="process-card">
+              <div class="icon">📈</div>
+              <h5>Desired outcome</h5>
+              <p>A quote that is fast, accurate, commercially safe, and ready for human approval.</p>
+              <div class="process-list">
+                <span class="process-pill">Margin protected</span>
+                <span class="process-pill">Approval ready</span>
+              </div>
+            </div>
+          </div>
+          <div class="callout">
+            <h4>Core problem</h4>
+            <p>The challenge is not generating a quote. It is helping humans make confident decisions under uncertainty.</p>
+          </div>
+        </div>
+        <div class="note"><strong>Speaker note:</strong> Lead with the business challenge. This is a decision-support problem first, with AI and architecture in service of better commercial outcomes.</div>
+      </article>
+
+      <article class="slide">
+        <div class="slide-head">
+          <div>
+            <h2>MQI - MARGIN STABILIZATION - SLIDE 4</h2>
+            <h3>Designing the Workflow Before Exposing the Complexity</h3>
+            <p class="subtitle">The operator experiences a clear decision workflow, while a narrow set of specialized agents handles complexity behind the scenes.</p>
+          </div>
+          <div class="slide-number">04</div>
+        </div>
+        <div class="content two-col">
+          <div class="panel">
+            <h4>Operator-facing workflow</h4>
+            <div class="workflow-diagram">
+              <div class="workflow-step"><div class="step-index">1</div><div class="icon">📥</div><h5>Order Submitted</h5><p>Customer files and requirements enter the system.</p></div>
+              <div class="workflow-step"><div class="step-index">2</div><div class="icon">🔍</div><h5>Requirements Evaluated</h5><p>Inputs are structured and ambiguity is surfaced early.</p></div>
+              <div class="workflow-step"><div class="step-index">3</div><div class="icon">🏭</div><h5>Manufacturers Assessed</h5><p>Viable options are compared on cost, capacity, and timing.</p></div>
+              <div class="workflow-step"><div class="step-index">4</div><div class="icon">🧠</div><h5>Recommendation Generated</h5><p>A best-fit path is assembled with rationale and confidence.</p></div>
+              <div class="workflow-step"><div class="step-index">5</div><div class="icon">✅</div><h5>Human Review</h5><p>The final decision stays with the operator.</p></div>
+              <div class="workflow-step"><div class="step-index">6</div><div class="icon">📨</div><h5>Quote Sent</h5><p>The customer receives a fast, credible response.</p></div>
+            </div>
+          </div>
+          <div class="panel">
+            <h4>Behind the workflow</h4>
+            <div class="chain-diagram">
+              <div class="agent-node"><div class="icon">📥</div><h5>Intake Agent</h5><p>Extracts requirements from submitted files.</p></div>
+              <div class="agent-node"><div class="icon">🏭</div><h5>Manufacturer Quote Agent</h5><p>Pulls current supplier pricing.</p></div>
+              <div class="agent-node"><div class="icon">🧾</div><h5>Cost Inputs Agent</h5><p>Adds logistics, lead time, and internal costs.</p></div>
+              <div class="agent-node"><div class="icon">📈</div><h5>Margin Optimization Agent</h5><p>Applies pricing guardrails and commercial logic.</p></div>
+              <div class="agent-node"><div class="icon">🧠</div><h5>Decision Layer</h5><p>Builds the recommendation with rationale.</p></div>
+              <div class="agent-node"><div class="icon">✅</div><h5>Human Approver</h5><p>Sends the quote with accountability.</p></div>
+            </div>
+          </div>
+          <div class="callout" style="grid-column: 1 / -1;">
+            <h4>Design choice</h4>
+            <p>Workflow first for the user. Specialized agents behind the scenes for modularity, trust, and maintainability.</p>
+          </div>
+        </div>
+        <div class="note"><strong>Speaker note:</strong> This keeps the architecture, but makes the product flow legible. The audience should understand the workflow first and the agentic system second.</div>
+      </article>
+
+      <article class="slide">
+        <div class="slide-head">
+          <div>
+            <h2>MQI - MARGIN STABILIZATION - SLIDE 5</h2>
+            <h3>Human Judgment + System Evaluation = Faster, Safer Decisions</h3>
+            <p class="subtitle">The product is designed to support judgment, not replace it: AI narrows uncertainty, while humans remain accountable for the final decision.</p>
+          </div>
+          <div class="slide-number">05</div>
+        </div>
+        <div class="content two-col">
+          <div class="panel">
+            <h4>What the system contributes</h4>
+            <ul>
+              <li>Recommendation generation</li>
+              <li>Confidence scoring</li>
+              <li>Rationale generation</li>
+              <li>Approval workflow support</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h4>What the human retains</h4>
+            <ul>
+              <li>Judgment over exceptions and tradeoffs</li>
+              <li>Approval authority</li>
+              <li>Commercial accountability</li>
+              <li>Final send decision</li>
+            </ul>
+          </div>
+          <div class="callout" style="grid-column: 1 / -1;">
+            <h4>Collaboration model</h4>
+            <p>Human judgment + system evaluation = faster, safer decisions with more transparency and less manual reconstruction.</p>
+          </div>
+        </div>
+        <div class="note"><strong>Speaker note:</strong> Make the trust model explicit. This is not autonomous quoting. It is decision support designed to improve speed, clarity, and confidence.</div>
+      </article>
+
+      <article class="slide">
+        <div class="slide-head">
+          <div>
+            <h2>MQI - MARGIN STABILIZATION - SLIDE 6</h2>
+            <h3>Designing for Speed Now and Scale Later</h3>
+            <p class="subtitle">A token-driven design system accelerated prototyping while creating reusable foundations for a broader platform.</p>
+          </div>
+          <div class="slide-number">06</div>
+        </div>
+        <div class="content design-system-grid">
+          <div>
+            <div class="token-hero" style="border-color:#f3c7d0;background:linear-gradient(180deg, #fff6f8 0%, #fdf5f6 100%);box-shadow:0 10px 24px rgba(228, 0, 43, 0.08);">
+              <h4 style="color:#E4002B;">Token naming conventions</h4>
+              <p>Designed with tokens to accelerate prototyping now and support platform expansion later.</p>
+              <div class="token-groups">
+                <div class="token-group" style="border-color:#f3c7d0;">
+                  <strong style="color:#E4002B;">MQI status tokens</strong>
+                  <div class="token-row">
+                    <span class="token-chip">mqi.color.status.success</span>
+                    <span class="token-chip">mqi.color.status.warning</span>
+                    <span class="token-chip">mqi.color.status.danger</span>
+                  </div>
+                </div>
+                <div class="token-group" style="border-color:#d7e7ef;">
+                  <strong style="color:#0F7EB1;">MQI foundation tokens</strong>
+                  <div class="token-row">
+                    <span class="token-chip">mqi.color.brand.primary</span>
+                    <span class="token-chip">mqi.font.size.headingXl</span>
+                    <span class="token-chip">mqi.spacing.4</span>
+                    <span class="token-chip">mqi.radius.md</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="panel" style="margin-top:16px;border-color:#f3c7d0;">
+              <h4 style="color:#E4002B;">Why this mattered in the case study</h4>
+              <ul style="font-size:18px;gap:10px;">
+                <li>Faster UX iteration across the workflow</li>
+                <li>Consistent states for confidence, risk, and approvals</li>
+                <li>Reusable foundations for future product surfaces</li>
+              </ul>
+            </div>
+          </div>
+          <div class="mini-stack">
+            <div class="panel" style="border-color:#f3c7d0;">
+              <h4 style="color:#E4002B;">MQI token preview</h4>
+              <div class="swatches">
+                <div class="swatch"><div class="swatch-color" style="background:#E4002B"></div><label>mqi.color.brand.primary</label></div>
+                <div class="swatch"><div class="swatch-color" style="background:#0F7EB1"></div><label>mqi.color.brand.secondary</label></div>
+              </div>
+              <div class="json-sample">{
+  "tokens": {
+    "mqi.color.brand.primary": "#E4002B",
+    "mqi.color.status.danger": "#E4002B",
+    "mqi.font.size.headingXl": "34px",
+    "mqi.spacing.4": "16px",
+    "mqi.radius.md": "10px"
+  }
+}</div>
+            </div>
+            <div class="decision-panel" style="border-color:#d7e7ef;background:linear-gradient(180deg, #ffffff 0%, #f5fbfe 100%);">
+              <div class="component-header" style="margin-bottom:8px;">
+                <div class="component-title">Token-driven component example</div>
+                <div class="badge" style="color:#0F7EB1;background:#eef7fb;border-color:#cfe7f2;">Approval Ready</div>
+              </div>
+              <span class="component-caption">The same token system supports status visibility, spacing consistency, and fast prototyping across the workflow.</span>
+              <div class="token-row" style="margin-top:10px;">
+                <span class="token-chip">mqi.color.status.success</span>
+                <span class="token-chip">mqi.font.size.label</span>
+                <span class="token-chip">mqi.spacing.4</span>
+                <span class="token-chip">mqi.radius.md</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="note"><strong>Speaker note:</strong> Keep this grounded in product design value: faster prototyping, clearer states, and reusable UI foundations — not design-system theory for its own sake.</div>
+      </article>
+
+      <article class="slide">
+        <div class="slide-head">
+          <div>
+            <h2>MQI - MARGIN STABILIZATION - SLIDE 7</h2>
+            <h3>One Workflow, Two Clear Outcomes</h3>
+            <p class="subtitle">The same experience delivers faster responses for customers and higher-confidence decisions for internal teams.</p>
+          </div>
+          <div class="slide-number">07</div>
+        </div>
+        <div class="content journey-layout">
+          <div class="journey-grid">
+            <div class="journey-lane">
+              <h5>Customer Journey</h5>
+              <div class="journey-steps">
+                <div class="journey-step"><strong>Submit Request</strong><span>Upload CAD, drawings, and requirements.</span></div>
+                <div class="journey-step"><strong>Receive Quote</strong><span>Get a fast, credible response.</span></div>
+                <div class="journey-step"><strong>Review Terms</strong><span>See price, lead time, and delivery details.</span></div>
+                <div class="journey-step"><strong>Move Forward</strong><span>Approve and place the order.</span></div>
+              </div>
+            </div>
+            <div class="journey-lane">
+              <h5>Sales Rep Journey</h5>
+              <div class="journey-steps">
+                <div class="journey-step"><strong>Receive Order</strong><span>Start from structured, agent-extracted requirements.</span></div>
+                <div class="journey-step"><strong>Review Inputs</strong><span>See supplier price, costs, logistics, and confidence.</span></div>
+                <div class="journey-step"><strong>Approve Quote</strong><span>Check margin, risk, and recommendation rationale.</span></div>
+                <div class="journey-step"><strong>Send Quote</strong><span>Respond with confidence and speed.</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="callout">
+            <h4>Outcome</h4>
+            <p>Faster quotes, clearer decisions, and more consistent margin protection despite supplier volatility.</p>
+          </div>
+        </div>
+        <div class="note"><strong>Speaker note:</strong> This is the operator experience slide. Keep it tied to workflow value, trust, and business outcomes rather than implementation detail.</div>
+      </article>
+
+      <article class="slide">
+        <div class="slide-head">
+          <div>
+            <h2>MQI - MARGIN STABILIZATION - SLIDE 8</h2>
+            <h3>Architecture in Support of the Workflow</h3>
+            <p class="subtitle">A modular architecture supports live quote assembly, reusable skills, and future platform evolution without removing human oversight.</p>
+          </div>
+          <div class="slide-number">08</div>
+        </div>
+        <div class="content">
+          <div class="architecture-stack">
+            <div class="architecture-layer">
+              <h5>User Layer</h5>
+              <div class="architecture-row">
+                <div class="architecture-node"><strong>Customer</strong><span>Submits quote request</span></div>
+                <div class="architecture-node"><strong>Sales Rep</strong><span>Reviews approval-ready quote</span></div>
+                <div class="architecture-node"><strong>Ops Team</strong><span>Validates exceptions</span></div>
+                <div class="architecture-node"><strong>Leadership</strong><span>Gets a scalable decision-support model</span></div>
+              </div>
+            </div>
+            <div class="architecture-arrow">↓</div>
+            <div class="architecture-layer" style="border-color:#f3c7d0;">
+              <h5 style="color:#E4002B;">Orchestration + Agent Layer</h5>
+              <div class="architecture-row">
+                <div class="architecture-node"><strong>Intake Agent</strong><span>Extracts files and requirements</span></div>
+                <div class="architecture-node"><strong>Pricing Agents</strong><span>Manufacturer, cost, and margin logic</span></div>
+                <div class="architecture-node"><strong>Skills</strong><span>Reusable workflows and prompts</span></div>
+                <div class="architecture-node"><strong>Orchestrator</strong><span>Chains agents and manages state</span></div>
+              </div>
+            </div>
+            <div class="architecture-arrow">↓</div>
+            <div class="architecture-layer" style="border-color:#d7e7ef;">
+              <h5 style="color:#0F7EB1;">Data + Platform Layer</h5>
+              <div class="architecture-row">
+                <div class="architecture-node"><strong>Manufacturer APIs</strong><span>Lead time, labor, material cost</span></div>
+                <div class="architecture-node"><strong>Internal Data</strong><span>Costs, constraints, memory</span></div>
+                <div class="architecture-node"><strong>Design Tokens</strong><span>Shared UI system foundations</span></div>
+                <div class="architecture-node"><strong>Platform Roadmap</strong><span>Expansion path for future MQI surfaces</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="callout">
+            <h4>Architecture takeaway</h4>
+            <p>The same system supports quote generation now and platform evolution later: workflow, agents, data, and UI foundations scale together.</p>
+          </div>
+        </div>
+        <div class="note"><strong>Speaker note:</strong> Use this slide to show systems thinking, but keep the story clear: architecture matters because it supports faster, safer decisions and future product growth.</div>
+      </article>
+
+      <article class="slide">
+        <div class="slide-head">
+          <div>
+            <h2>MQI - MARGIN STABILIZATION - SLIDE 9</h2>
+            <h3>From Quoting Workflow to Manufacturing Intelligence Platform</h3>
+            <p class="subtitle">The quoting workflow is the wedge; the broader opportunity is a manufacturing intelligence platform that scales decision support across sourcing, pricing, and supplier performance.</p>
+          </div>
+          <div class="slide-number">09</div>
+        </div>
+        <div class="content two-col">
+          <div class="panel">
+            <h4>Where this grows</h4>
+            <ul>
+              <li>Manufacturer matching</li>
+              <li>Sourcing intelligence</li>
+              <li>Pricing intelligence</li>
+              <li>Supplier performance insight</li>
+              <li>Predictive recommendations</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h4>Presenter signal</h4>
+            <ul>
+              <li>Framed an ambiguous business problem</li>
+              <li>Designed a workflow before overbuilding architecture</li>
+              <li>Used AI as a product design collaborator</li>
+              <li>Created a platform-ready system, not a one-off flow</li>
+            </ul>
+          </div>
+          <div class="callout" style="grid-column: 1 / -1;">
+            <h4>Positioning</h4>
+            <p>This is the work of an AI-first product designer: workflow design, decision support, human-AI collaboration, and scalable platform thinking.</p>
+          </div>
+        </div>
+        <div class="note"><strong>Speaker note:</strong> End on product and platform vision. The audience should leave seeing both immediate workflow value and longer-term strategic expansion.</div>
+      </article>
+    </section>
+    <section>
+      <article class="slide">
+        <div class="slide-head">
+          <div>
+            <h2>MQI - MARGIN STABILIZATION - SLIDE 10</h2>
+            <h3>Advanced Architecture Diagram</h3>
+            <p class="subtitle">Detailed system view of the manufacturing quote intelligence architecture.</p>
+          </div>
+          <div class="slide-number">10</div>
+        </div>
+        <div class="content">
+          <div class="image-frame" title="Click to open fullscreen and zoom">
+            <img src="./architecture.png" alt="Advanced architecture diagram for manufacturing quote intelligence" />
+          </div>
+        </div>
+        <div class="note"><strong>Speaker note:</strong> Use this as the detailed architecture reference after the simpler high-level view. It shows the advanced system design behind the platform.</div>
+      </article>
+    </section>
+  </main>
+  <div class="image-modal" id="imageModal" aria-hidden="true">
+    <div class="image-modal-inner">
+      <div class="image-modal-toolbar">
+        <button type="button" data-zoom="out">−</button>
+        <button type="button" data-zoom="in">+</button>
+        <button type="button" data-zoom="reset">Reset</button>
+        <button type="button" data-close="modal">Close</button>
+      </div>
+      <div class="image-modal-stage" id="imageModalStage">
+        <img id="imageModalImg" src="" alt="Expanded architecture diagram" />
+      </div>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('imageModalImg');
+      const stage = document.getElementById('imageModalStage');
+      let scale = 1;
+      const setScale = (next) => {
+        scale = Math.max(0.5, Math.min(3, next));
+        modalImg.style.transform = `scale(${scale})`;
+      };
+      document.querySelectorAll('.image-frame img').forEach((img) => {
+        img.addEventListener('click', () => {
+          modalImg.src = img.getAttribute('src');
+          modal.classList.add('open');
+          modal.setAttribute('aria-hidden', 'false');
+          setScale(1);
+          stage.scrollTop = 0;
+          stage.scrollLeft = 0;
+        });
+      });
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal || e.target.dataset.close === 'modal') {
+          modal.classList.remove('open');
+          modal.setAttribute('aria-hidden', 'true');
+        }
+        if (e.target.dataset.zoom === 'in') setScale(scale + 0.25);
+        if (e.target.dataset.zoom === 'out') setScale(scale - 0.25);
+        if (e.target.dataset.zoom === 'reset') setScale(1);
+      });
+      window.addEventListener('keydown', (e) => {
+        if (!modal.classList.contains('open')) return;
+        if (e.key === 'Escape') {
+          modal.classList.remove('open');
+          modal.setAttribute('aria-hidden', 'true');
+        }
+        if (e.key === '+' || e.key === '=') setScale(scale + 0.25);
+        if (e.key === '-') setScale(scale - 0.25);
+        if (e.key === '0') setScale(1);
+      });
+    })();
+  </script>
+    </section>
+  </main>
+</body>
+</html>

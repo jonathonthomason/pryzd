@@ -1,0 +1,350 @@
+{
+  "meta": {
+    "name": "MQI System",
+    "version": "0.6.0",
+    "description": "Design system foundations, Bootstrap token overrides, and component coverage for manufacturing quote operations.",
+    "intendedImporter": "Design System Studio Importer",
+    "status": "explorer-1-aligned-bootstrap-tokenized"
+  },
+  "tokens": {
+    "color": {
+      "brand": {
+        "primary": "#E4002B",
+        "secondary": "#0F7EB1",
+        "soft": "#FDF5F6"
+      },
+      "text": {
+        "primary": "#1F1F1F",
+        "secondary": "#676767",
+        "tertiary": "#475467"
+      },
+      "surface": {
+        "page": "#F9F9F9",
+        "base": "#FFFFFF",
+        "subtle": "#F3F3F3",
+        "sidebar": "#F9F9F9"
+      },
+      "border": {
+        "default": "#D5D5D5",
+        "strong": "#C4C4C4",
+        "translucent": "rgba(31,31,31,0.08)"
+      },
+      "status": {
+        "success": "#0D8758",
+        "successSoft": "#ECFDF6",
+        "warning": "#A28400",
+        "warningSoft": "#FDF9E7",
+        "danger": "#E4002B",
+        "dangerSoft": "#FBE2E7"
+      },
+      "overlay": {
+        "tooltipBg": "#1F1F1F",
+        "tooltipText": "#FFFFFF"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "base": "Helvetica Now Text, Helvetica Neue, Arial, sans-serif",
+        "display": "Helvetica Now Display, Helvetica Neue, Arial, sans-serif",
+        "secondary": "Helvetica Now Micro, Helvetica Neue, Arial, sans-serif"
+      },
+      "fontSize": {
+        "headingXl": "34px",
+        "headingLg": "22px",
+        "body": "16px",
+        "label": "13px",
+        "meta": "12px"
+      },
+      "fontWeight": {
+        "regular": 400,
+        "semibold": 600,
+        "bold": 700,
+        "heavy": 800
+      },
+      "lineHeight": {
+        "heading": 1.15,
+        "section": 1.3,
+        "body": 1.55,
+        "label": 1.5
+      }
+    },
+    "spacing": {
+      "2": "8px",
+      "2_5": "10px",
+      "3": "12px",
+      "4": "16px",
+      "4_5": "18px",
+      "6": "24px",
+      "8": "32px"
+    },
+    "radius": {
+      "sm": "8px",
+      "md": "10px",
+      "lg": "12px",
+      "xl": "14px",
+      "xxl": "16px",
+      "pill": "999px"
+    },
+    "shadow": {
+      "panel": "0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.04)",
+      "sm": "0 1px 2px rgba(16, 24, 40, 0.04)",
+      "lg": "0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.04)"
+    },
+    "motion": {
+      "focusRing": "0 0 0 0.2rem rgba(15,126,177,0.12)"
+    }
+  },
+  "semantic": {
+    "surface": {
+      "page": "{tokens.color.surface.page}",
+      "panel": "{tokens.color.surface.base}",
+      "panelSubtle": "{tokens.color.surface.subtle}",
+      "sidebar": "{tokens.color.surface.sidebar}"
+    },
+    "text": {
+      "heading": "{tokens.color.text.primary}",
+      "body": "{tokens.color.text.secondary}",
+      "tertiary": "{tokens.color.text.tertiary}"
+    },
+    "state": {
+      "goodBackground": "{tokens.color.status.successSoft}",
+      "goodText": "{tokens.color.status.success}",
+      "warningBackground": "{tokens.color.status.warningSoft}",
+      "warningText": "{tokens.color.status.warning}",
+      "blockerBackground": "{tokens.color.status.dangerSoft}",
+      "blockerText": "{tokens.color.status.danger}"
+    },
+    "action": {
+      "primaryBackground": "{tokens.color.brand.primary}",
+      "primaryText": "#FFFFFF",
+      "secondaryBackground": "{tokens.color.surface.base}",
+      "secondaryText": "{tokens.color.brand.secondary}",
+      "secondaryBorder": "{tokens.color.border.default}"
+    }
+  },
+  "bootstrapTheme": {
+    "bodyBg": "{tokens.color.surface.page}",
+    "bodyColor": "{tokens.color.text.primary}",
+    "emphasisColor": "{tokens.color.text.primary}",
+    "secondaryColor": "{tokens.color.text.secondary}",
+    "secondaryBg": "{tokens.color.surface.subtle}",
+    "tertiaryBg": "{tokens.color.surface.subtle}",
+    "primary": "{tokens.color.brand.primary}",
+    "secondary": "{tokens.color.brand.secondary}",
+    "success": "{tokens.color.status.success}",
+    "warning": "{tokens.color.status.warning}",
+    "danger": "{tokens.color.status.danger}",
+    "light": "{tokens.color.surface.subtle}",
+    "dark": "{tokens.color.text.primary}",
+    "borderColor": "{tokens.color.border.default}",
+    "borderColorTranslucent": "{tokens.color.border.translucent}",
+    "fontSansSerif": "{tokens.typography.fontFamily.base}",
+    "bodyFontFamily": "{tokens.typography.fontFamily.base}",
+    "bodyFontSize": "{tokens.typography.fontSize.body}",
+    "bodyLineHeight": "{tokens.typography.lineHeight.body}",
+    "headingColor": "{tokens.color.text.primary}",
+    "linkColor": "{tokens.color.brand.secondary}",
+    "linkHoverColor": "#0D6E9C",
+    "borderRadius": "{tokens.radius.md}",
+    "borderRadiusSm": "{tokens.radius.sm}",
+    "borderRadiusLg": "{tokens.radius.lg}",
+    "borderRadiusXl": "{tokens.radius.xl}",
+    "borderRadiusXxl": "{tokens.radius.xxl}",
+    "boxShadow": "{tokens.shadow.panel}",
+    "boxShadowSm": "{tokens.shadow.sm}",
+    "boxShadowLg": "{tokens.shadow.lg}",
+    "cardBg": "{tokens.color.surface.base}",
+    "cardBorderColor": "{tokens.color.border.default}",
+    "cardCapBg": "{tokens.color.surface.subtle}",
+    "cardCapColor": "{tokens.color.text.primary}",
+    "modalBg": "{tokens.color.surface.base}",
+    "modalBorderColor": "{tokens.color.border.default}",
+    "modalHeaderBorderColor": "{tokens.color.border.default}",
+    "modalFooterBorderColor": "{tokens.color.border.default}",
+    "offcanvasBg": "{tokens.color.surface.base}",
+    "offcanvasBorderColor": "{tokens.color.border.default}",
+    "dropdownBg": "{tokens.color.surface.base}",
+    "dropdownBorderColor": "{tokens.color.border.default}",
+    "dropdownLinkColor": "{tokens.color.text.primary}",
+    "dropdownLinkHoverBg": "{tokens.color.surface.subtle}",
+    "dropdownLinkHoverColor": "{tokens.color.text.primary}",
+    "accordionBg": "{tokens.color.surface.base}",
+    "accordionBorderColor": "{tokens.color.border.default}",
+    "accordionBtnBg": "{tokens.color.surface.base}",
+    "accordionActiveBg": "{tokens.color.surface.subtle}",
+    "accordionActiveColor": "{tokens.color.text.primary}",
+    "listGroupBg": "{tokens.color.surface.base}",
+    "listGroupBorderColor": "{tokens.color.border.default}",
+    "listGroupActiveBg": "{tokens.color.surface.subtle}",
+    "listGroupActiveBorderColor": "{tokens.color.border.default}",
+    "listGroupActiveColor": "{tokens.color.text.primary}",
+    "paginationColor": "{tokens.color.brand.secondary}",
+    "paginationBg": "{tokens.color.surface.base}",
+    "paginationBorderColor": "{tokens.color.border.default}",
+    "paginationHoverColor": "#0D6E9C",
+    "paginationHoverBg": "{tokens.color.surface.subtle}",
+    "paginationHoverBorderColor": "{tokens.color.border.strong}",
+    "paginationActiveBg": "{tokens.color.brand.primary}",
+    "paginationActiveBorderColor": "{tokens.color.brand.primary}",
+    "navLinkColor": "{tokens.color.text.secondary}",
+    "navLinkHoverColor": "{tokens.color.brand.secondary}",
+    "navbarColor": "{tokens.color.text.secondary}",
+    "navbarHoverColor": "{tokens.color.brand.secondary}",
+    "navbarActiveColor": "{tokens.color.brand.primary}",
+    "progressBg": "{tokens.color.surface.subtle}",
+    "progressBarBg": "{tokens.color.brand.primary}",
+    "tooltipBg": "{tokens.color.overlay.tooltipBg}",
+    "tooltipColor": "{tokens.color.overlay.tooltipText}",
+    "popoverBg": "{tokens.color.surface.base}",
+    "popoverBorderColor": "{tokens.color.border.default}",
+    "popoverHeaderBg": "{tokens.color.surface.subtle}",
+    "popoverHeaderColor": "{tokens.color.text.primary}",
+    "popoverBodyColor": "{tokens.color.text.secondary}",
+    "toastBg": "rgba(255,255,255,0.96)",
+    "toastBorderColor": "{tokens.color.border.default}",
+    "toastHeaderBg": "{tokens.color.surface.subtle}",
+    "toastHeaderColor": "{tokens.color.text.primary}"
+  },
+  "components": {
+    "topbar": {
+      "height": "56px",
+      "background": "rgba(255,255,255,0.92)",
+      "borderColor": "{tokens.color.border.default}"
+    },
+    "sidebar": {
+      "background": "{semantic.surface.sidebar}",
+      "borderColor": "{tokens.color.border.default}",
+      "width": "280px"
+    },
+    "panel": {
+      "background": "{semantic.surface.panel}",
+      "borderColor": "{tokens.color.border.default}",
+      "radius": "{tokens.radius.lg}",
+      "shadow": "{tokens.shadow.panel}"
+    },
+    "card": {
+      "background": "{semantic.surface.panel}",
+      "borderColor": "{tokens.color.border.default}",
+      "radius": "{tokens.radius.md}",
+      "padding": "16px"
+    },
+    "button": {
+      "primary": {
+        "background": "{semantic.action.primaryBackground}",
+        "textColor": "{semantic.action.primaryText}",
+        "radius": "{tokens.radius.sm}",
+        "padding": "10px 14px"
+      },
+      "secondary": {
+        "background": "{semantic.action.secondaryBackground}",
+        "textColor": "{semantic.action.secondaryText}",
+        "borderColor": "{semantic.action.secondaryBorder}",
+        "radius": "{tokens.radius.sm}",
+        "padding": "10px 14px"
+      },
+      "tertiary": {
+        "background": "transparent",
+        "textColor": "{tokens.color.text.tertiary}",
+        "radius": "{tokens.radius.sm}",
+        "padding": "10px 0"
+      },
+      "disabled": {
+        "background": "#EEF2F6",
+        "textColor": "#98A2B3",
+        "borderColor": "{tokens.color.border.default}",
+        "radius": "{tokens.radius.sm}",
+        "padding": "10px 14px"
+      }
+    },
+    "field": {
+      "background": "{semantic.surface.panel}",
+      "borderColor": "{tokens.color.border.default}",
+      "radius": "{tokens.radius.sm}",
+      "padding": "10px 12px",
+      "focusRing": "{tokens.motion.focusRing}"
+    },
+    "statusCard": {
+      "goodBackground": "{semantic.state.goodBackground}",
+      "goodText": "{semantic.state.goodText}",
+      "warningBackground": "{semantic.state.warningBackground}",
+      "warningText": "{semantic.state.warningText}",
+      "blockerBackground": "{semantic.state.blockerBackground}",
+      "blockerText": "{semantic.state.blockerText}",
+      "radius": "{tokens.radius.md}",
+      "padding": "14px"
+    },
+    "detailsToggle": {
+      "background": "{tokens.color.surface.subtle}",
+      "borderColor": "{tokens.color.border.default}",
+      "radius": "{tokens.radius.md}",
+      "padding": "14px"
+    },
+    "badge": {
+      "background": "{tokens.color.brand.soft}",
+      "textColor": "{tokens.color.brand.primary}",
+      "radius": "{tokens.radius.pill}",
+      "padding": "0 8px",
+      "height": "24px"
+    },
+    "breadcrumb": {
+      "textColor": "{tokens.color.text.secondary}",
+      "separatorColor": "#C0C7D1"
+    }
+  },
+  "patterns": [
+    {
+      "id": "capture",
+      "name": "Upload-first intake",
+      "description": "Source material first, editable form second."
+    },
+    {
+      "id": "confirm",
+      "name": "Blocker-first confirmation",
+      "description": "Focus on what prevents safe continuation."
+    },
+    {
+      "id": "optimize",
+      "name": "Margin approval",
+      "description": "Check target margin, recommended path, approve or revise."
+    },
+    {
+      "id": "present",
+      "name": "Customer quote",
+      "description": "Show scope, price, lead time, and approval path."
+    }
+  ],
+  "coverage": {
+    "bootstrapLikeComponents": [
+      "alerts",
+      "badges",
+      "breadcrumbs",
+      "buttons",
+      "button-groups",
+      "cards",
+      "collapse",
+      "dropdowns",
+      "forms",
+      "input-groups",
+      "list-groups",
+      "modals",
+      "navs-tabs",
+      "pagination",
+      "progress",
+      "spinners",
+      "tables",
+      "toasts",
+      "tooltips",
+      "accordions",
+      "offcanvas",
+      "placeholders-skeletons",
+      "popovers",
+      "close-buttons"
+    ],
+    "guidance": [
+      "Prefer calm utility-forward styling over decorative variation.",
+      "Use fewer variants and keep interaction hierarchy obvious.",
+      "Do not hide critical workflow meaning inside overlays or tooltips.",
+      "Operational workflows should optimize for scanability, status, and next action."
+    ]
+  }
+}

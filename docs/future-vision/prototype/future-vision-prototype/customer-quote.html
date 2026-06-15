@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MQI · Present</title>
+  <style>
+    :root {
+      --bg: #f9f9f9; --surface: #ffffff; --surface-subtle: #f3f3f3; --sidebar: #f9f9f9; --ink: #1f1f1f; --muted: #676767; --line: #d5d5d5; --brand: #e4002b; --accent: #0f7eb1; --brand-soft: #fdf5f6; --success: #0d8758; --success-soft: #ecfdf6; --warn: #a28400; --warn-soft: #fdf9e7; --danger: #e4002b; --danger-soft: #fbe2e7; --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.04);
+    }
+    * { box-sizing: border-box; } html, body { height: 100%; } body { margin: 0; font-family: "Helvetica Now Text", "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--ink); } a { color: inherit; text-decoration: none; } button { font: inherit; }
+    .app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+    .sidebar { background: var(--sidebar); border-right: 1px solid var(--line); padding: 14px 12px 24px; position: sticky; top: 0; height: 100vh; overflow: auto; }
+    .sidebar-header { display: flex; align-items: center; gap: 10px; padding: 8px 10px 16px; border-bottom: 1px solid var(--line); margin-bottom: 12px; cursor: pointer; }
+    .logo { width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, #e4002b, #ff2e54); display: grid; place-items: center; color: white; font-size: 12px; font-weight: 800; letter-spacing: .04em; }
+    .sidebar-title { font-size: 14px; font-weight: 800; } .sidebar-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .search { margin: 0 8px 14px; border: 1px solid var(--line); background: white; border-radius: 8px; padding: 10px 12px; color: var(--muted); font-size: 13px; }
+    .nav-group { margin: 12px 0; } .nav-label { padding: 8px 10px 6px; font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .nav-item { display: block; padding: 9px 10px; margin: 2px 4px; border-radius: 8px; font-size: 14px; color: #334155; }
+    .nav-item.active { background: white; color: var(--brand); font-weight: 700; box-shadow: inset 0 0 0 1px var(--line); }
+    .main { min-width: 0; display: flex; flex-direction: column; }
+    .topbar { height: 56px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.92); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: sticky; top: 0; z-index: 10; }
+    .topbar-left { display: flex; align-items: center; gap: 10px; } .badge { display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 999px; background: var(--success-soft); color: var(--success); font-size: 12px; font-weight: 700; } .topbar-right { color: var(--muted); font-size: 13px; }
+    .content { padding: 28px 32px 56px; max-width: 1180px; }
+    .breadcrumbs { display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: 13px; margin-bottom: 16px; } .breadcrumbs span.sep { color: #c0c7d1; }
+    h1 { margin: 0 0 8px; font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; }
+    .intro { font-size: 16px; line-height: 1.6; color: #4b5563; max-width: 760px; margin-bottom: 18px; }
+    .state-toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .toolbar-label { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-right: 4px; align-self: center; }
+    .state-chip { display: inline-flex; align-items: center; height: 30px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--line); background: white; color: #334155; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .state-chip.active { background: white; color: var(--accent); border: 1px solid var(--line); border-color: #cddcff; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+    .panel-header { padding: 16px 18px; border-bottom: 1px solid var(--line); background: var(--surface-subtle); }
+    .panel-title { font-size: 15px; font-weight: 800; } .panel-body { padding: 18px; }
+    .quote-head { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; margin-bottom: 18px; }
+    .quote-price { font-size: 42px; font-weight: 800; }
+    .sub { color: var(--muted); font-size: 14px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .card, .status-box { border: 1px solid var(--line); border-radius: 10px; background: white; padding: 14px; }
+    .card .k { display: block; font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+    .status-box.good { background: var(--success-soft); }
+    .status-box.warn { background: var(--warn-soft); }
+    .status-box.blocker { background: var(--danger-soft); }
+    .status-box strong { display:block; margin-bottom:4px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 14px; border-radius: 8px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
+    .btn.primary { background: var(--brand); color: white; } .btn.secondary { background: white; color: var(--accent); border: 1px solid var(--line); } .btn[disabled] { background:#eef2f6; color:#98a2b3; cursor:not-allowed; }
+    .hidden { display:none !important; }
+    @media (max-width: 980px) { .app { grid-template-columns: 1fr; } .sidebar { position: relative; height: auto; border-right: none; border-bottom: 1px solid var(--line); } .content { padding: 20px; } .grid { grid-template-columns: 1fr; } .quote-head { display: block; } .quote-price { margin-top: 10px; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <a class="sidebar-header" href="index.html"><div class="logo">MQI</div><div><div class="sidebar-title">Quote prototype</div><div class="sidebar-sub">Prototype workflow</div></div></a>
+      <div class="search">Search prototype</div>
+      <div class="nav-group"><div class="nav-label">Workflow</div><a class="nav-item" href="prototype.html">Capture</a><a class="nav-item" href="requirements-review.html">Confirm</a><a class="nav-item" href="quote-review.html">Optimize</a><a class="nav-item active" href="customer-quote.html">Present</a></div>
+      <div class="nav-group"><div class="nav-label">System</div><a class="nav-item" href="design-system.html">MQI System</a><a class="nav-item" href="design-system.json">JSON tokens</a><a class="nav-item" href="index.html">Prototype home</a></div>
+    </aside>
+    <main class="main">
+      <div class="topbar"><div class="topbar-left"><strong>Present</strong><span class="badge" id="topBadge">Ready to approve</span></div><div class="topbar-right">MQI System</div></div>
+      <div class="content">
+        <div class="breadcrumbs"><span>Workflow</span><span class="sep">/</span><span>Present</span></div>
+        <h1>Customer quote</h1>
+        <div class="intro">Clear scope. Clear price. Clear next step.</div>
+
+        <div class="state-toolbar">
+          <span class="toolbar-label">Customer states</span>
+          <button class="state-chip active" data-view="ready">Ready to approve</button>
+          <button class="state-chip" data-view="clarification">Clarification requested</button>
+          <button class="state-chip" data-view="alternate">Alternate quote option</button>
+          <button class="state-chip" data-view="expired">Expired / refreshed</button>
+        </div>
+
+        <section class="panel">
+          <div class="panel-header"><div class="panel-title">Quote</div></div>
+          <div class="panel-body">
+            <div class="quote-head">
+              <div>
+                <h2 style="margin:0 0 8px; font-size:22px;" id="quoteTitle">CNC Housing Rev B</h2>
+                <div class="sub" id="quoteMeta">North Ridge Industrial · 2,500 units · Valid 14 days</div>
+              </div>
+              <div>
+                <div class="quote-price" id="quotePrice">$186,400</div>
+                <div class="sub" id="quoteLead">Lead time: 18 days</div>
+              </div>
+            </div>
+
+            <div class="status-box good" id="statusBox"><strong>Ready</strong>Quote is ready for approval.</div>
+
+            <div class="grid" style="margin-top:12px;">
+              <div class="card"><span class="k">Scope</span><span id="scopeValue">6061 aluminum · black anodize · reseller-label-ready packaging</span></div>
+              <div class="card"><span class="k">Assumptions</span><span id="assumptionsValue">Domestic production path</span></div>
+              <div class="card"><span class="k">Commercial note</span><span id="noteValue">Pricing assumes submitted tolerance profile</span></div>
+              <div class="card"><span class="k">Alternate</span><span id="alternateValue">Lower-cost offshore path available on request</span></div>
+            </div>
+
+            <div class="actions">
+              <a class="btn primary" id="approveBtn" href="#">Approve quote</a>
+              <a class="btn secondary" id="secondaryBtn" href="#">Request clarification</a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const states = {
+      ready: {
+        badge: 'Ready to approve', badgeClass: 'badge',
+        title: 'CNC Housing Rev B', meta: 'North Ridge Industrial · 2,500 units · Valid 14 days', price: '$186,400', lead: 'Lead time: 18 days',
+        status: ['Ready', 'Quote is ready for approval.', 'good'],
+        scope: '6061 aluminum · black anodize · reseller-label-ready packaging', assumptions: 'Domestic production path', note: 'Pricing assumes submitted tolerance profile', alternate: 'Lower-cost offshore path available on request',
+        primary: 'Approve quote', secondary: 'Request clarification', canApprove: true
+      },
+      clarification: {
+        badge: 'Clarification open', badgeClass: 'badge',
+        title: 'CNC Housing Rev B', meta: 'North Ridge Industrial · 2,500 units · Clarification requested', price: '$186,400', lead: 'Lead time: 18 days',
+        status: ['Clarification requested', 'Customer asked for assumption detail before approval.', 'warn'],
+        scope: '6061 aluminum · black anodize · reseller-label-ready packaging', assumptions: 'Domestic production path under review', note: 'Clarification requested on tolerance-linked pricing sensitivity', alternate: 'Alternate quote not yet requested',
+        primary: 'Respond with clarification', secondary: 'Update quote', canApprove: false
+      },
+      alternate: {
+        badge: 'Alternate available', badgeClass: 'badge',
+        title: 'CNC Housing Rev B — Alternate Quote', meta: 'North Ridge Industrial · 2,500 units · Valid 14 days', price: '$179,200', lead: 'Lead time: 23 days',
+        status: ['Alternate quote', 'Customer can choose lower price with longer lead time.', 'warn'],
+        scope: '6061 aluminum · black anodize · reseller-label-ready packaging', assumptions: 'Offshore alternate path', note: 'Domestic option remains available at faster lead time', alternate: 'Primary quote remains $186,400 / 18 days',
+        primary: 'Share alternate quote', secondary: 'Back to primary quote', canApprove: true
+      },
+      expired: {
+        badge: 'Refresh required', badgeClass: 'badge',
+        title: 'CNC Housing Rev B', meta: 'North Ridge Industrial · Quote expired', price: '$186,400', lead: 'Lead time: Reconfirm required',
+        status: ['Expired', 'Quote validity window has passed. Refresh before approval.', 'blocker'],
+        scope: '6061 aluminum · black anodize · reseller-label-ready packaging', assumptions: 'Previous commercial assumptions may need refresh', note: 'Lead time and price should be revalidated', alternate: 'No alternate should be approved until refresh',
+        primary: 'Refresh quote', secondary: 'Request updated terms', canApprove: false
+      }
+    };
+
+    const chips = [...document.querySelectorAll('.state-chip')];
+    const topBadge = document.getElementById('topBadge');
+    const quoteTitle = document.getElementById('quoteTitle');
+    const quoteMeta = document.getElementById('quoteMeta');
+    const quotePrice = document.getElementById('quotePrice');
+    const quoteLead = document.getElementById('quoteLead');
+    const statusBox = document.getElementById('statusBox');
+    const scopeValue = document.getElementById('scopeValue');
+    const assumptionsValue = document.getElementById('assumptionsValue');
+    const noteValue = document.getElementById('noteValue');
+    const alternateValue = document.getElementById('alternateValue');
+    const approveBtn = document.getElementById('approveBtn');
+    const secondaryBtn = document.getElementById('secondaryBtn');
+
+    function applyView(name) {
+      const s = states[name];
+      chips.forEach(ch => ch.classList.toggle('active', ch.dataset.view === name));
+      topBadge.textContent = s.badge;
+      quoteTitle.textContent = s.title;
+      quoteMeta.textContent = s.meta;
+      quotePrice.textContent = s.price;
+      quoteLead.textContent = s.lead;
+      statusBox.className = 'status-box ' + s.status[2];
+      statusBox.innerHTML = `<strong>${s.status[0]}</strong>${s.status[1]}`;
+      scopeValue.textContent = s.scope;
+      assumptionsValue.textContent = s.assumptions;
+      noteValue.textContent = s.note;
+      alternateValue.textContent = s.alternate;
+      approveBtn.textContent = s.primary;
+      secondaryBtn.textContent = s.secondary;
+      approveBtn.style.pointerEvents = s.canApprove ? 'auto' : 'none';
+      approveBtn.style.opacity = s.canApprove ? '1' : '.45';
+    }
+
+    chips.forEach(ch => ch.addEventListener('click', () => applyView(ch.dataset.view)));
+    applyView('ready');
+  </script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MQI · Optimize</title>
+  <style>
+    :root {
+      --bg: #f9f9f9;
+      --surface: #ffffff;
+      --surface-subtle: #f3f3f3;
+      --sidebar: #f9f9f9;
+      --ink: #1f1f1f;
+      --muted: #676767;
+      --line: #d5d5d5;
+      --brand: #e4002b;
+      --accent: #0f7eb1;
+      --brand-soft: #fdf5f6;
+      --success: #0d8758;
+      --success-soft: #ecfdf6;
+      --warn: #a28400;
+      --warn-soft: #fdf9e7;
+      --danger: #e4002b;
+      --danger-soft: #fbe2e7;
+      --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.04);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: "Helvetica Now Text", "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--ink); }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    .app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+    .sidebar { background: var(--sidebar); border-right: 1px solid var(--line); padding: 14px 12px 24px; position: sticky; top: 0; height: 100vh; overflow: auto; }
+    .sidebar-header { display: flex; align-items: center; gap: 10px; padding: 8px 10px 16px; border-bottom: 1px solid var(--line); margin-bottom: 12px; cursor: pointer; }
+    .logo { width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, #e4002b, #ff2e54); display: grid; place-items: center; color: white; font-size: 12px; font-weight: 800; letter-spacing: .04em; }
+    .sidebar-title { font-size: 14px; font-weight: 800; } .sidebar-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .search { margin: 0 8px 14px; border: 1px solid var(--line); background: white; border-radius: 8px; padding: 10px 12px; color: var(--muted); font-size: 13px; }
+    .nav-group { margin: 12px 0; } .nav-label { padding: 8px 10px 6px; font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .nav-item { display: block; padding: 9px 10px; margin: 2px 4px; border-radius: 8px; font-size: 14px; color: #334155; }
+    .nav-item.active { background: white; color: var(--brand); font-weight: 700; box-shadow: inset 0 0 0 1px var(--line); }
+    .main { min-width: 0; display: flex; flex-direction: column; }
+    .topbar { height: 56px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.92); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: sticky; top: 0; z-index: 10; }
+    .topbar-left { display: flex; align-items: center; gap: 10px; } .badge { display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 999px; background: var(--brand-soft); color: var(--brand); font-size: 12px; font-weight: 700; } .topbar-right { color: var(--muted); font-size: 13px; }
+    .content { padding: 28px 32px 56px; max-width: 1180px; }
+    .breadcrumbs { display: flex; gap: 8px; align-items: center; color: var(--muted); font-size: 13px; margin-bottom: 16px; } .breadcrumbs span.sep { color: #c0c7d1; }
+    h1 { margin: 0 0 8px; font-size: 34px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; }
+    .intro { font-size: 16px; line-height: 1.6; color: #4b5563; max-width: 760px; margin-bottom: 18px; }
+    .state-toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .toolbar-label { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-right: 4px; align-self: center; }
+    .state-chip { display: inline-flex; align-items: center; height: 30px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--line); background: white; color: #334155; font-size: 12px; font-weight: 700; cursor: pointer; }
+    .state-chip.active { background: white; color: var(--accent); border: 1px solid var(--line); border-color: #cddcff; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1.45fr) 320px; gap: 16px; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+    .panel-header { padding: 16px 18px; border-bottom: 1px solid var(--line); background: var(--surface-subtle); }
+    .panel-title { font-size: 15px; font-weight: 800; } .panel-body { padding: 18px; }
+    .stats, .grid, .list, .decision-actions { display: grid; gap: 12px; }
+    .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-bottom: 16px; }
+    .grid { grid-template-columns: 1fr 1fr; }
+    .metric, .tile, .state, .trace, .decision-box { border: 1px solid var(--line); border-radius: 10px; background: white; padding: 14px; }
+    .metric .k, .tile .k { display: block; font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+    .metric .v { font-size: 20px; font-weight: 800; }
+    .state.good { background: var(--success-soft); } .state.blocker { background: var(--danger-soft); } .state.warn { background: var(--warn-soft); } .state strong { display: block; margin-bottom: 4px; }
+    .decision-box { background: #fffdf8; }
+    .decision-actions { grid-template-columns: 1fr 1fr 1fr; margin-top: 12px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 14px; border-radius: 8px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
+    .btn.primary { background: var(--brand); color: white; } .btn.secondary { background: white; color: var(--accent); border: 1px solid var(--line); } .btn.ghost { background: transparent; color: #475467; }
+    details.trace summary { cursor: pointer; font-weight: 800; list-style: none; } details.trace summary::-webkit-details-marker { display: none; }
+    @media (max-width: 1100px) { .layout { grid-template-columns: 1fr; } }
+    @media (max-width: 980px) { .app { grid-template-columns: 1fr; } .sidebar { position: relative; height: auto; border-right: none; border-bottom: 1px solid var(--line); } .content { padding: 20px; } .stats, .grid, .decision-actions { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <a class="sidebar-header" href="index.html"><div class="logo">MQI</div><div><div class="sidebar-title">Quote prototype</div><div class="sidebar-sub">Prototype workflow</div></div></a>
+      <div class="search">Search prototype</div>
+      <div class="nav-group"><div class="nav-label">Workflow</div><a class="nav-item" href="prototype.html">Capture</a><a class="nav-item" href="requirements-review.html">Confirm</a><a class="nav-item active" href="quote-review.html">Optimize</a><a class="nav-item" href="customer-quote.html">Present</a></div>
+      <div class="nav-group"><div class="nav-label">System</div><a class="nav-item" href="design-system.html">MQI System</a><a class="nav-item" href="design-system.json">JSON tokens</a><a class="nav-item" href="index.html">Prototype home</a></div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar"><div class="topbar-left"><strong>Optimize</strong><span class="badge">Margin approval</span></div><div class="topbar-right">MQI System</div></div>
+      <div class="content">
+        <div class="breadcrumbs"><span>Workflow</span><span class="sep">/</span><span>Optimize</span></div>
+        <h1>Optimize quote</h1>
+        <div class="intro">Check the commercial outcome. Decide whether to send, revise, or change path.</div>
+
+        <div class="state-toolbar">
+          <span class="toolbar-label">Optimize states</span>
+          <button class="state-chip active" data-view="met">Target met</button>
+          <button class="state-chip" data-view="missed">Target missed</button>
+          <button class="state-chip" data-view="alternate">Alternate path</button>
+          <button class="state-chip" data-view="decision">Revise vs approve</button>
+        </div>
+
+        <div class="layout">
+          <section class="panel">
+            <div class="panel-header"><div class="panel-title">Quote recommendation</div></div>
+            <div class="panel-body">
+              <div class="stats">
+                <div class="metric"><span class="k">Quote</span><div class="v" id="quoteValue">$186,400</div></div>
+                <div class="metric"><span class="k">Margin</span><div class="v" id="marginValue">52.1%</div></div>
+                <div class="metric"><span class="k">Target</span><div class="v" id="targetValue">Met</div></div>
+                <div class="metric"><span class="k">Lead time</span><div class="v" id="leadValue">18 days</div></div>
+              </div>
+
+              <div class="grid">
+                <div class="tile"><span class="k">Recommended path</span><span id="pathValue">Domestic production</span></div>
+                <div class="tile"><span class="k">Alternate</span><span id="altValue">Offshore lowers price, weakens schedule buffer</span></div>
+                <div class="tile"><span class="k">Unit price</span><span id="unitValue">$74.56</span></div>
+                <div class="tile"><span class="k">Quote valid</span><span id="validValue">14 days</span></div>
+              </div>
+
+              <div class="decision-box">
+                <strong id="decisionTitle">Recommended action</strong>
+                <div id="decisionBody" style="margin-top:6px; color: var(--muted);">Target margin is met. Quote is ready to send.</div>
+                <div class="decision-actions" id="decisionActions">
+                  <button class="btn primary" type="button" id="approveBtn">Approve</button>
+                  <button class="btn secondary" type="button">Revise</button>
+                  <button class="btn secondary" type="button">Compare path</button>
+                </div>
+              </div>
+
+              <div class="actions"><a class="btn primary" id="presentBtn" href="customer-quote.html">Open customer quote</a><a class="btn secondary" href="requirements-review.html">Back</a></div>
+            </div>
+          </section>
+
+          <aside class="panel">
+            <div class="panel-header"><div class="panel-title">Signals</div></div>
+            <div class="panel-body">
+              <div class="list">
+                <div class="state" id="marginState"><strong>Margin target met</strong>52.1% projected</div>
+                <div class="state" id="recommendationState"><strong>Recommendation</strong>Domestic retained</div>
+                <details class="trace"><summary>System details</summary><div id="traceText" style="margin-top:8px; color: var(--muted);">Costed → optimized margin → selected quote path.</div></details>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const states = {
+      met: {
+        quote: '$186,400', margin: '52.1%', target: 'Met', lead: '18 days', path: 'Domestic production', alt: 'Offshore lowers price, weakens schedule buffer', unit: '$74.56', valid: '14 days',
+        decisionTitle: 'Recommended action', decisionBody: 'Target margin is met. Quote is ready to send.',
+        marginState: ['Margin target met', '52.1% projected', 'good'], recommendationState: ['Recommendation', 'Domestic retained', 'good'],
+        trace: 'Costed → optimized margin → selected quote path.', canPresent: true
+      },
+      missed: {
+        quote: '$168,900', margin: '46.3%', target: 'Missed', lead: '18 days', path: 'Domestic production', alt: 'Quote below target margin', unit: '$67.56', valid: '14 days',
+        decisionTitle: 'Recommended action', decisionBody: 'Margin is below target. Revise assumptions or pricing before sending.',
+        marginState: ['Target missed', '46.3% projected', 'blocker'], recommendationState: ['Recommendation', 'Do not send yet', 'warn'],
+        trace: 'Costed → optimized margin → best current path still below target.', canPresent: false
+      },
+      alternate: {
+        quote: '$179,200', margin: '50.4%', target: 'Met', lead: '23 days', path: 'Offshore alternate', alt: 'Domestic hits schedule faster but at lower margin efficiency', unit: '$71.68', valid: '14 days',
+        decisionTitle: 'Recommended action', decisionBody: 'Alternate path meets target margin but changes lead-time posture.',
+        marginState: ['Target met', '50.4% projected', 'good'], recommendationState: ['Alternate path', 'Offshore path recommended for margin efficiency', 'warn'],
+        trace: 'Domestic path compared against offshore alternate → alternate selected on margin.', canPresent: true
+      },
+      decision: {
+        quote: '$186,400', margin: '52.1%', target: 'Met', lead: '18 days', path: 'Domestic production', alt: 'Alternate available if margin or schedule assumptions change', unit: '$74.56', valid: '14 days',
+        decisionTitle: 'Decision point', decisionBody: 'Quote can be approved now or revised if the team wants to pressure-test the alternate path.',
+        marginState: ['Target met', '52.1% projected', 'good'], recommendationState: ['Decision open', 'Approve now or revise for scenario testing', 'warn'],
+        trace: 'Primary path selected → alternate retained for commercial comparison.', canPresent: true
+      }
+    };
+
+    const chips = [...document.querySelectorAll('.state-chip')];
+    const ids = ['quoteValue','marginValue','targetValue','leadValue','pathValue','altValue','unitValue','validValue','decisionTitle','decisionBody','traceText'];
+    const els = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
+    const marginState = document.getElementById('marginState');
+    const recommendationState = document.getElementById('recommendationState');
+    const presentBtn = document.getElementById('presentBtn');
+
+    function setCard(el, cfg) {
+      el.className = 'state ' + (cfg[2] || '');
+      el.innerHTML = `<strong>${cfg[0]}</strong>${cfg[1]}`;
+    }
+
+    function applyView(name) {
+      const s = states[name];
+      chips.forEach(ch => ch.classList.toggle('active', ch.dataset.view === name));
+      els.quoteValue.textContent = s.quote;
+      els.marginValue.textContent = s.margin;
+      els.targetValue.textContent = s.target;
+      els.leadValue.textContent = s.lead;
+      els.pathValue.textContent = s.path;
+      els.altValue.textContent = s.alt;
+      els.unitValue.textContent = s.unit;
+      els.validValue.textContent = s.valid;
+      els.decisionTitle.textContent = s.decisionTitle;
+      els.decisionBody.textContent = s.decisionBody;
+      els.traceText.textContent = s.trace;
+      setCard(marginState, s.marginState);
+      setCard(recommendationState, s.recommendationState);
+      presentBtn.style.pointerEvents = s.canPresent ? 'auto' : 'none';
+      presentBtn.style.opacity = s.canPresent ? '1' : '.45';
+    }
+
+    chips.forEach(ch => ch.addEventListener('click', () => applyView(ch.dataset.view)));
+    applyView('met');
+  </script>
+</body>
+</html>

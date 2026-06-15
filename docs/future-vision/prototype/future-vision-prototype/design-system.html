@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MQI System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --mqi-bg: #f9f9f9;
+      --mqi-surface: #ffffff;
+      --mqi-surface-subtle: #f3f3f3;
+      --mqi-sidebar: #f9f9f9;
+      --mqi-text: #1f1f1f;
+      --mqi-text-muted: #676767;
+      --mqi-border: #d5d5d5;
+      --mqi-border-strong: #c4c4c4;
+      --mqi-brand: #e4002b;
+      --mqi-brand-soft: #fdf5f6;
+      --mqi-accent: #0f7eb1;
+      --mqi-success: #0d8758;
+      --mqi-success-soft: #ecfdf6;
+      --mqi-warning: #a28400;
+      --mqi-warning-soft: #fdf9e7;
+      --mqi-danger: #e4002b;
+      --mqi-danger-soft: #fbe2e7;
+      --mqi-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.04);
+
+      --bs-body-bg: var(--mqi-bg);
+      --bs-body-color: var(--mqi-text);
+      --bs-emphasis-color: var(--mqi-text);
+      --bs-secondary-color: var(--mqi-text-muted);
+      --bs-secondary-bg: var(--mqi-surface-subtle);
+      --bs-tertiary-bg: var(--mqi-surface-subtle);
+
+      --bs-primary: var(--mqi-brand);
+      --bs-primary-rgb: 228, 0, 43;
+      --bs-secondary: var(--mqi-accent);
+      --bs-secondary-rgb: 15, 126, 177;
+      --bs-success: var(--mqi-success);
+      --bs-success-rgb: 13, 135, 88;
+      --bs-warning: var(--mqi-warning);
+      --bs-warning-rgb: 162, 132, 0;
+      --bs-danger: var(--mqi-danger);
+      --bs-danger-rgb: 228, 0, 43;
+      --bs-light: var(--mqi-surface-subtle);
+      --bs-light-rgb: 243, 243, 243;
+      --bs-dark: var(--mqi-text);
+      --bs-dark-rgb: 31, 31, 31;
+
+      --bs-border-color: var(--mqi-border);
+      --bs-border-color-translucent: rgba(31, 31, 31, 0.08);
+      --bs-border-radius: 10px;
+      --bs-border-radius-sm: 8px;
+      --bs-border-radius-lg: 12px;
+      --bs-border-radius-xl: 14px;
+      --bs-border-radius-xxl: 16px;
+      --bs-box-shadow: var(--mqi-shadow);
+      --bs-box-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04);
+      --bs-box-shadow-lg: var(--mqi-shadow);
+
+      --bs-font-sans-serif: "Helvetica Now Text", "Helvetica Neue", Arial, sans-serif;
+      --bs-body-font-family: var(--bs-font-sans-serif);
+      --bs-body-font-size: 1rem;
+      --bs-body-line-height: 1.55;
+      --bs-heading-color: var(--mqi-text);
+
+      --bs-link-color: var(--mqi-accent);
+      --bs-link-hover-color: #0d6e9c;
+
+      --bs-card-bg: var(--mqi-surface);
+      --bs-card-border-color: var(--mqi-border);
+      --bs-card-cap-bg: var(--mqi-surface-subtle);
+      --bs-card-cap-color: var(--mqi-text);
+
+      --bs-modal-bg: var(--mqi-surface);
+      --bs-modal-border-color: var(--mqi-border);
+      --bs-modal-header-border-color: var(--mqi-border);
+      --bs-modal-footer-border-color: var(--mqi-border);
+
+      --bs-offcanvas-bg: var(--mqi-surface);
+      --bs-offcanvas-border-color: var(--mqi-border);
+
+      --bs-dropdown-bg: var(--mqi-surface);
+      --bs-dropdown-border-color: var(--mqi-border);
+      --bs-dropdown-link-color: var(--mqi-text);
+      --bs-dropdown-link-hover-bg: var(--mqi-surface-subtle);
+      --bs-dropdown-link-hover-color: var(--mqi-text);
+
+      --bs-accordion-bg: var(--mqi-surface);
+      --bs-accordion-border-color: var(--mqi-border);
+      --bs-accordion-btn-bg: var(--mqi-surface);
+      --bs-accordion-active-bg: var(--mqi-surface-subtle);
+      --bs-accordion-active-color: var(--mqi-text);
+
+      --bs-list-group-bg: var(--mqi-surface);
+      --bs-list-group-border-color: var(--mqi-border);
+      --bs-list-group-active-bg: var(--mqi-surface-subtle);
+      --bs-list-group-active-border-color: var(--mqi-border);
+      --bs-list-group-active-color: var(--mqi-text);
+
+      --bs-pagination-color: var(--mqi-accent);
+      --bs-pagination-bg: var(--mqi-surface);
+      --bs-pagination-border-color: var(--mqi-border);
+      --bs-pagination-hover-color: #0d6e9c;
+      --bs-pagination-hover-bg: var(--mqi-surface-subtle);
+      --bs-pagination-hover-border-color: var(--mqi-border-strong);
+      --bs-pagination-active-bg: var(--mqi-brand);
+      --bs-pagination-active-border-color: var(--mqi-brand);
+
+      --bs-nav-link-color: var(--mqi-text-muted);
+      --bs-nav-link-hover-color: var(--mqi-accent);
+      --bs-navbar-color: var(--mqi-text-muted);
+      --bs-navbar-hover-color: var(--mqi-accent);
+      --bs-navbar-active-color: var(--mqi-brand);
+
+      --bs-progress-bg: var(--mqi-surface-subtle);
+      --bs-progress-bar-bg: var(--mqi-brand);
+
+      --bs-tooltip-bg: var(--mqi-text);
+      --bs-tooltip-color: #ffffff;
+      --bs-popover-bg: var(--mqi-surface);
+      --bs-popover-border-color: var(--mqi-border);
+      --bs-popover-header-bg: var(--mqi-surface-subtle);
+      --bs-popover-header-color: var(--mqi-text);
+      --bs-popover-body-color: var(--mqi-text-muted);
+
+      --bs-toast-bg: rgba(255,255,255,0.96);
+      --bs-toast-border-color: var(--mqi-border);
+      --bs-toast-header-bg: var(--mqi-surface-subtle);
+      --bs-toast-header-color: var(--mqi-text);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: var(--bs-font-sans-serif);
+      background: var(--mqi-bg);
+      color: var(--mqi-text);
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    .mqi-sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      background: var(--mqi-sidebar);
+      border-right: 1px solid var(--mqi-border);
+      padding: 14px 12px 24px;
+    }
+
+    .mqi-sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px 16px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--mqi-border);
+    }
+
+    .mqi-logo {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      background: linear-gradient(135deg, #e4002b, #ff2e54);
+    }
+
+    .mqi-sidebar-title { font-size: 14px; font-weight: 800; }
+    .mqi-sidebar-sub { font-size: 12px; color: var(--mqi-text-muted); }
+
+    .mqi-search {
+      margin: 0 8px 14px;
+      border: 1px solid var(--mqi-border);
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--mqi-text-muted);
+      font-size: 13px;
+    }
+
+    .mqi-nav-group { margin: 12px 0; }
+    .mqi-nav-label {
+      padding: 8px 10px 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--mqi-text-muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .mqi-nav-item {
+      display: block;
+      margin: 2px 4px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #334155;
+      text-decoration: none;
+    }
+
+    .mqi-nav-item:hover { background: rgba(255,255,255,.8); }
+    .mqi-nav-item.active {
+      background: #fff;
+      color: var(--mqi-brand);
+      font-weight: 700;
+      box-shadow: inset 0 0 0 1px var(--mqi-border);
+    }
+
+    .mqi-main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mqi-topbar {
+      height: 56px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--mqi-border);
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(10px);
+    }
+
+    .mqi-topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mqi-badge {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      background: var(--mqi-brand-soft);
+      color: var(--mqi-brand);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .mqi-topbar-right {
+      font-size: 13px;
+      color: var(--mqi-text-muted);
+    }
+
+    .mqi-content {
+      max-width: 1200px;
+      padding: 28px 32px 56px;
+    }
+
+    .mqi-breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: var(--mqi-text-muted);
+    }
+
+    .mqi-breadcrumbs .sep { color: #c0c7d1; }
+
+    .mqi-page-title {
+      margin: 0 0 8px;
+      font-size: 34px;
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .mqi-page-intro {
+      max-width: 760px;
+      margin-bottom: 24px;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #4b5563;
+    }
+
+    .mqi-doc-panel {
+      background: var(--mqi-surface);
+      border: 1px solid var(--mqi-border);
+      border-radius: 12px;
+      box-shadow: var(--mqi-shadow);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .mqi-doc-panel-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--mqi-border);
+      background: var(--mqi-surface-subtle);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .mqi-doc-panel-body {
+      padding: 18px;
+    }
+
+    .mqi-token-card,
+    .mqi-demo-card {
+      border: 1px solid var(--mqi-border);
+      border-radius: 10px;
+      background: #fff;
+      padding: 16px;
+      height: 100%;
+    }
+
+    .mqi-token-label,
+    .mqi-meta-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--mqi-text-muted);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .mqi-swatch {
+      height: 56px;
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,.05);
+      margin-bottom: 10px;
+    }
+
+    .mqi-type-xl { font-size: 34px; line-height: 1.15; font-weight: 800; }
+    .mqi-type-lg { font-size: 22px; line-height: 1.3; font-weight: 800; }
+    .mqi-type-md { font-size: 16px; line-height: 1.55; font-weight: 700; }
+    .mqi-type-sm { font-size: 13px; line-height: 1.5; font-weight: 700; color: var(--mqi-text-muted); }
+
+    .mqi-note {
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--mqi-text-muted);
+      line-height: 1.55;
+    }
+
+    .mqi-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--mqi-text-muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .mqi-state-card {
+      border-radius: 10px;
+      border: 1px solid var(--mqi-border);
+      padding: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .mqi-state-card strong { display: block; margin-bottom: 4px; }
+    .mqi-state-good { background: var(--mqi-success-soft); }
+    .mqi-state-warn { background: var(--mqi-warning-soft); }
+    .mqi-state-danger { background: var(--mqi-danger-soft); }
+
+    .mqi-toolbar-chip {
+      display: inline-flex;
+      align-items: center;
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1px solid var(--mqi-border);
+      background: #fff;
+      color: #334155;
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    .mqi-toolbar-chip.active {
+      background: var(--mqi-brand-soft);
+      color: var(--mqi-brand);
+      border-color: #f5c6cf;
+    }
+
+    .mqi-upload-demo {
+      border: 1px dashed var(--mqi-border-strong);
+      border-radius: 10px;
+      background: linear-gradient(180deg, #fff 0%, #fdf5f6 100%);
+      padding: 18px;
+    }
+
+    .mqi-code {
+      border: 1px solid var(--mqi-border);
+      border-radius: 10px;
+      background: #fff;
+      padding: 14px;
+      font-size: 13px;
+      color: #374151;
+      overflow: auto;
+    }
+
+    /* Bootstrap theming */
+    .btn {
+      --bs-btn-font-weight: 800;
+      --bs-btn-border-radius: 8px;
+      box-shadow: none !important;
+    }
+    .btn-primary {
+      --bs-btn-color: #fff;
+      --bs-btn-bg: var(--mqi-brand);
+      --bs-btn-border-color: var(--mqi-brand);
+      --bs-btn-hover-color: #fff;
+      --bs-btn-hover-bg: #ce0026;
+      --bs-btn-hover-border-color: #ce0026;
+      --bs-btn-active-color: #fff;
+      --bs-btn-active-bg: #ce0026;
+      --bs-btn-active-border-color: #ce0026;
+      --bs-btn-disabled-color: #fff;
+      --bs-btn-disabled-bg: #f0a8b5;
+      --bs-btn-disabled-border-color: #f0a8b5;
+    }
+    .btn-outline-secondary,
+    .btn-secondary {
+      --bs-btn-color: var(--mqi-accent);
+      --bs-btn-bg: #fff;
+      --bs-btn-border-color: var(--mqi-border);
+      --bs-btn-hover-color: #0d6e9c;
+      --bs-btn-hover-bg: #fff;
+      --bs-btn-hover-border-color: var(--mqi-border-strong);
+      --bs-btn-active-color: #0d6e9c;
+      --bs-btn-active-bg: #fff;
+      --bs-btn-active-border-color: var(--mqi-border-strong);
+      --bs-btn-disabled-color: #98a2b3;
+      --bs-btn-disabled-bg: #eef2f6;
+      --bs-btn-disabled-border-color: #d5d5d5;
+    }
+    .btn-link {
+      --bs-btn-color: #475467;
+      --bs-btn-hover-color: var(--mqi-accent);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .form-control,
+    .form-select {
+      border-color: var(--mqi-border);
+      border-radius: 8px;
+      padding: 0.6875rem 0.75rem;
+    }
+    .form-control:focus,
+    .form-select:focus,
+    .form-check-input:focus {
+      border-color: var(--mqi-accent);
+      box-shadow: 0 0 0 0.2rem rgba(15,126,177,.12);
+    }
+    .form-check-input:checked {
+      background-color: var(--mqi-brand);
+      border-color: var(--mqi-brand);
+    }
+    .input-group-text {
+      background: var(--mqi-surface-subtle);
+      border-color: var(--mqi-border);
+      color: var(--mqi-text-muted);
+    }
+    .card,
+    .accordion-item,
+    .list-group-item,
+    .modal-content,
+    .dropdown-menu,
+    .toast,
+    .offcanvas {
+      border-color: var(--bs-border-color);
+    }
+    .card,
+    .accordion-item,
+    .toast,
+    .modal-content,
+    .offcanvas {
+      box-shadow: var(--bs-box-shadow);
+    }
+    .card-header,
+    .accordion-button:not(.collapsed),
+    .modal-header,
+    .offcanvas-header,
+    .dropdown-header,
+    .list-group-item.active {
+      background: var(--mqi-surface-subtle);
+      color: var(--mqi-text);
+      border-color: var(--mqi-border);
+    }
+    .accordion-button:focus {
+      box-shadow: none;
+      border-color: var(--mqi-border);
+    }
+    .alert {
+      border-radius: 10px;
+      border-width: 1px;
+    }
+    .alert-success { background: var(--mqi-success-soft); color: var(--mqi-success); border-color: #cbeedc; }
+    .alert-warning { background: var(--mqi-warning-soft); color: #7c6500; border-color: #f3e6a8; }
+    .alert-danger { background: var(--mqi-danger-soft); color: var(--mqi-danger); border-color: #f3c3cc; }
+    .badge.text-bg-primary { background: var(--mqi-brand) !important; }
+    .badge.text-bg-secondary { background: var(--mqi-accent) !important; }
+    .badge.text-bg-success { background: var(--mqi-success) !important; }
+    .progress {
+      background: var(--bs-progress-bg);
+      border-radius: 999px;
+    }
+    .progress-bar { background: var(--bs-progress-bar-bg); }
+    .nav-tabs .nav-link {
+      color: var(--mqi-text-muted);
+      border-radius: 8px 8px 0 0;
+    }
+    .nav-tabs .nav-link.active {
+      color: var(--mqi-brand);
+      border-color: var(--mqi-border) var(--mqi-border) #fff;
+      font-weight: 700;
+    }
+    .pagination .page-link {
+      color: var(--mqi-accent);
+      border-color: var(--mqi-border);
+    }
+    .pagination .page-item.active .page-link {
+      background: var(--mqi-brand);
+      border-color: var(--mqi-brand);
+    }
+    .table {
+      --bs-table-bg: transparent;
+      --bs-table-border-color: var(--mqi-border);
+    }
+    .table thead th {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--mqi-text-muted);
+      border-bottom-width: 1px;
+    }
+    .tooltip .tooltip-inner,
+    .popover {
+      border-radius: 8px;
+    }
+
+    @media (max-width: 980px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .mqi-sidebar {
+        position: relative;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--mqi-border);
+      }
+      .mqi-content { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="mqi-sidebar">
+      <div class="mqi-sidebar-header">
+        <div class="mqi-logo">MQI</div>
+        <div>
+          <div class="mqi-sidebar-title">MQI System</div>
+          <div class="mqi-sidebar-sub">Bootstrap-themed docs</div>
+        </div>
+      </div>
+
+      <div class="mqi-search">Search docs</div>
+
+      <div class="mqi-nav-group">
+        <div class="mqi-nav-label">Introduction</div>
+        <a class="mqi-nav-item active" href="#overview">Getting started</a>
+        <a class="mqi-nav-item" href="#principles">Principles</a>
+      </div>
+
+      <div class="mqi-nav-group">
+        <div class="mqi-nav-label">Foundations</div>
+        <a class="mqi-nav-item" href="#color">Color</a>
+        <a class="mqi-nav-item" href="#type">Typography</a>
+        <a class="mqi-nav-item" href="#spacing">Spacing & surfaces</a>
+        <a class="mqi-nav-item" href="#a11y">Accessibility</a>
+      </div>
+
+      <div class="mqi-nav-group">
+        <div class="mqi-nav-label">Components</div>
+        <a class="mqi-nav-item" href="#buttons">Buttons</a>
+        <a class="mqi-nav-item" href="#forms">Forms</a>
+        <a class="mqi-nav-item" href="#feedback">Feedback</a>
+        <a class="mqi-nav-item" href="#navigation">Navigation</a>
+        <a class="mqi-nav-item" href="#data">Data display</a>
+        <a class="mqi-nav-item" href="#overlays">Overlays</a>
+      </div>
+
+      <div class="mqi-nav-group">
+        <div class="mqi-nav-label">Patterns</div>
+        <a class="mqi-nav-item" href="#capture">Capture</a>
+        <a class="mqi-nav-item" href="#confirm">Confirm</a>
+        <a class="mqi-nav-item" href="#optimize">Optimize</a>
+        <a class="mqi-nav-item" href="#present">Present</a>
+      </div>
+    </aside>
+
+    <main class="mqi-main">
+      <div class="mqi-topbar">
+        <div class="mqi-topbar-left">
+          <strong>MQI System</strong>
+          <span class="mqi-badge">Bootstrap included</span>
+        </div>
+        <div class="mqi-topbar-right">Explorer-1-aligned shell</div>
+      </div>
+
+      <div class="mqi-content">
+        <div class="mqi-breadcrumbs">
+          <span>Introduction</span>
+          <span class="sep">/</span>
+          <span>Getting started</span>
+        </div>
+
+        <h1 class="mqi-page-title" id="overview">MQI System</h1>
+        <div class="mqi-page-intro">A Bootstrap-backed, Explorer-1-aligned design system for manufacturing quote operations. The docs shell follows Storybook-style documentation chrome while the components are themed into MQI.</div>
+
+        <section class="mqi-doc-panel" id="principles">
+          <div class="mqi-doc-panel-header">Principles</div>
+          <div class="mqi-doc-panel-body">
+            <div class="row g-3">
+              <div class="col-lg-6">
+                <div class="mqi-demo-card h-100">
+                  <span class="mqi-meta-label">Interaction model</span>
+                  <ul class="mqi-list">
+                    <li>upload first</li>
+                    <li>presume confidence</li>
+                    <li>show blockers before detail</li>
+                    <li>optimize for quote speed</li>
+                    <li>collapse low-value system granularity</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="mqi-demo-card h-100">
+                  <span class="mqi-meta-label">Workflow</span>
+                  <span class="mqi-toolbar-chip active">Capture</span>
+                  <span class="mqi-toolbar-chip">Confirm</span>
+                  <span class="mqi-toolbar-chip">Optimize</span>
+                  <span class="mqi-toolbar-chip">Present</span>
+                  <div class="mqi-note">Each step should feel operational, not presentational.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mqi-doc-panel" id="color">
+          <div class="mqi-doc-panel-header">Color</div>
+          <div class="mqi-doc-panel-body">
+            <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-xl-4">
+              <div class="col"><div class="mqi-token-card"><div class="mqi-swatch" style="background:#e4002b"></div><span class="mqi-token-label">Brand primary</span><div>#E4002B</div></div></div>
+              <div class="col"><div class="mqi-token-card"><div class="mqi-swatch" style="background:#0f7eb1"></div><span class="mqi-token-label">Accent</span><div>#0F7EB1</div></div></div>
+              <div class="col"><div class="mqi-token-card"><div class="mqi-swatch" style="background:#f9f9f9"></div><span class="mqi-token-label">Page</span><div>#F9F9F9</div></div></div>
+              <div class="col"><div class="mqi-token-card"><div class="mqi-swatch" style="background:#1f1f1f"></div><span class="mqi-token-label">Text</span><div>#1F1F1F</div></div></div>
+              <div class="col"><div class="mqi-token-card"><div class="mqi-swatch" style="background:#ecfdf6"></div><span class="mqi-token-label">Success surface</span><div>#ECFDF6</div></div></div>
+              <div class="col"><div class="mqi-token-card"><div class="mqi-swatch" style="background:#fdf9e7"></div><span class="mqi-token-label">Warning surface</span><div>#FDF9E7</div></div></div>
+              <div class="col"><div class="mqi-token-card"><div class="mqi-swatch" style="background:#fbe2e7"></div><span class="mqi-token-label">Danger surface</span><div>#FBE2E7</div></div></div>
+              <div class="col"><div class="mqi-token-card"><div class="mqi-swatch" style="background:#d5d5d5"></div><span class="mqi-token-label">Border</span><div>#D5D5D5</div></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mqi-doc-panel" id="type">
+          <div class="mqi-doc-panel-header">Typography</div>
+          <div class="mqi-doc-panel-body">
+            <div class="row g-3">
+              <div class="col-md-6 col-xl-3"><div class="mqi-demo-card"><div class="mqi-type-xl">Heading XL</div><div class="mqi-note">34 / 1.15 / 800</div></div></div>
+              <div class="col-md-6 col-xl-3"><div class="mqi-demo-card"><div class="mqi-type-lg">Heading L</div><div class="mqi-note">22 / 1.3 / 800</div></div></div>
+              <div class="col-md-6 col-xl-3"><div class="mqi-demo-card"><div class="mqi-type-md">Body strong</div><div class="mqi-note">16 / 1.55 / 700</div></div></div>
+              <div class="col-md-6 col-xl-3"><div class="mqi-demo-card"><div class="mqi-type-sm">Meta label</div><div class="mqi-note">13 / 1.5 / 700</div></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mqi-doc-panel" id="spacing">
+          <div class="mqi-doc-panel-header">Spacing & surfaces</div>
+          <div class="mqi-doc-panel-body">
+            <div class="row g-3">
+              <div class="col-lg-3"><div class="mqi-demo-card"><span class="mqi-meta-label">Spacing scale</span><div>8 · 10 · 12 · 16 · 18 · 24 · 32</div></div></div>
+              <div class="col-lg-3"><div class="mqi-demo-card"><span class="mqi-meta-label">Radius</span><div>8 / 10 / 12</div></div></div>
+              <div class="col-lg-3"><div class="mqi-demo-card"><span class="mqi-meta-label">Borders</span><div>#D5D5D5 default</div></div></div>
+              <div class="col-lg-3"><div class="mqi-demo-card"><span class="mqi-meta-label">Shadow</span><div>soft, restrained</div></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mqi-doc-panel" id="a11y">
+          <div class="mqi-doc-panel-header">Accessibility</div>
+          <div class="mqi-doc-panel-body">
+            <ul class="mqi-list">
+              <li>Use strong contrast for primary text and controls.</li>
+              <li>Never rely on color alone for status meaning.</li>
+              <li>Keep dense workflows keyboard reachable.</li>
+              <li>Collapsed detail patterns must not block primary tasks.</li>
+              <li>Reserve muted text for secondary context only.</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="mqi-doc-panel" id="buttons">
+          <div class="mqi-doc-panel-header">Buttons</div>
+          <div class="mqi-doc-panel-body">
+            <div class="d-flex gap-2 flex-wrap mb-3">
+              <button class="btn btn-primary">Primary action</button>
+              <button class="btn btn-secondary">Secondary action</button>
+              <button class="btn btn-link">Tertiary action</button>
+              <button class="btn btn-primary" disabled>Disabled</button>
+            </div>
+            <div class="mqi-note">Primary uses JPL red. Secondary is quiet and blue-accented. Use one primary per screen.</div>
+          </div>
+        </section>
+
+        <section class="mqi-doc-panel" id="forms">
+          <div class="mqi-doc-panel-header">Forms</div>
+          <div class="mqi-doc-panel-body">
+            <div class="row g-3">
+              <div class="col-lg-6">
+                <label class="form-label fw-bold text-uppercase small">Customer</label>
+                <input class="form-control" value="North Ridge Industrial">
+                <div class="form-text">Auto-filled from source material</div>
+              </div>
+              <div class="col-lg-6">
+                <label class="form-label fw-bold text-uppercase small">Quantity</label>
+                <div class="input-group">
+                  <input class="form-control" value="2500">
+                  <span class="input-group-text">units</span>
+                </div>
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-bold text-uppercase small">Requirements</label>
+                <textarea class="form-control" rows="4">6061 aluminum · black anodize · domestic preferred if viable</textarea>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-uppercase small">Lead time</label>
+                <select class="form-select"><option>18 days</option><option>23 days</option></select>
+              </div>
+              <div class="col-md-6 d-flex align-items-end">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" checked id="expedite">
+                  <label class="form-check-label" for="expedite">Expedite allowed within target economics</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mqi-doc-panel" id="feedback">
+          <div class="mqi-doc-panel-header">Feedback & status</div>
+          <div class="mqi-doc-panel-body">
+            <div class="row g-3 mb-3">
+              <div class="col-lg-4"><div class="alert alert-success mb-0"><strong>Ready</strong><br>Quote is safe to continue.</div></div>
+              <div class="col-lg-4"><div class="alert alert-warning mb-0"><strong>Needs review</strong><br>Human clarification still needed.</div></div>
+              <div class="col-lg-4"><div class="alert alert-danger mb-0"><strong>Blocker</strong><br>Do not proceed until resolved.</div></div>
+            </div>
+            <div class="row g-3">
+              <div class="col-lg-4"><div class="mqi-state-card mqi-state-good"><strong>Good state</strong>Use for confirmed readiness.</div></div>
+              <div class="col-lg-4"><div class="mqi-state-card mqi-state-warn"><strong>Warning state</strong>Use for review-worthy but non-blocking issues.</div></div>
+              <div class="col-lg-4"><div class="mqi-state-card mqi-state-danger"><strong>Blocker state</strong>Use only when forward motion should stop.</div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mqi-doc-panel" id="navigation">
+          <div class="mqi-doc-panel-header">Navigation</div>
+          <div class="mqi-doc-panel-body">
+            <ul class="nav nav-tabs mb-3">
+              <li class="nav-item"><a class="nav-link active" href="#">Capture</a></li>
+              <li class="nav-item"><a class="nav-link" href="#">Confirm</a></li>
+              <li class="nav-item"><a class="nav-link" href="#">Optimize</a></li>
+              <li class="nav-item"><a class="nav-link" href="#">Present</a></li>
+            </ul>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="#">Workflow</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Capture</li>
+              </ol>
+            </nav>
+          </div>
+        </section>
+
+        <section class="mqi-doc-panel" id="data">
+          <div class="mqi-doc-panel-header">Data display</div>
+          <div class="mqi-doc-panel-body">
+            <div class="row g-3 mb-3">
+              <div class="col-lg-6">
+                <div class="card">
+                  <div class="card-header fw-bold">Metric cards</div>
+                  <div class="card-body">
+                    <div class="row g-2">
+                      <div class="col-4"><div class="mqi-demo-card"><span class="mqi-meta-label">Completeness</span><div class="fs-4 fw-bold">100%</div></div></div>
+                      <div class="col-4"><div class="mqi-demo-card"><span class="mqi-meta-label">Blockers</span><div class="fs-4 fw-bold">0</div></div></div>
+                      <div class="col-4"><div class="mqi-demo-card"><span class="mqi-meta-label">Margin</span><div class="fs-4 fw-bold">52.1%</div></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="card">
+                  <div class="card-header fw-bold">List group</div>
+                  <div class="list-group list-group-flush">
+                    <div class="list-group-item">housing-rev-b.step</div>
+                    <div class="list-group-item">finish-spec.pdf</div>
+                    <div class="list-group-item">tolerance-notes.xlsx</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table align-middle mb-0">
+                <thead>
+                  <tr><th>Path</th><th>Margin</th><th>Lead time</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Domestic</td><td>52.1%</td><td>18 days</td><td><span class="badge text-bg-success">Recommended</span></td></tr>
+                  <tr><td>Offshore</td><td>50.4%</td><td>23 days</td><td><span class="badge text-bg-secondary">Alternate</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="mqi-doc-panel" id="overlays">
+          <div class="mqi-doc-panel-header">Overlays, disclosure, and utility components</div>
+          <div class="mqi-doc-panel-body">
+            <div class="row g-3">
+              <div class="col-lg-6">
+                <div class="accordion" id="detailsAccordion">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">System details</button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#detailsAccordion">
+                      <div class="accordion-body">Use collapse for low-priority system detail, source traces, and confidence granularity.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="d-flex gap-2 flex-wrap mb-3">
+                  <button class="btn btn-secondary" data-bs-toggle="tooltip" title="Tooltip guidance should clarify, not carry critical meaning.">Tooltip</button>
+                  <button class="btn btn-secondary" data-bs-toggle="popover" data-bs-title="Popover" data-bs-content="Prefer inline disclosure before using popovers in core workflows.">Popover</button>
+                  <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#mqiModal">Modal</button>
+                  <button class="btn btn-secondary" data-bs-toggle="offcanvas" data-bs-target="#mqiOffcanvas">Offcanvas</button>
+                </div>
+                <div class="progress mb-3" role="progressbar" aria-valuenow="67" aria-valuemin="0" aria-valuemax="100">
+                  <div class="progress-bar" style="width: 67%">67%</div>
+                </div>
+                <div class="spinner-border text-primary me-2" role="status"><span class="visually-hidden">Loading...</span></div>
+                <span class="text-muted">Use sparingly; prefer skeletons for larger blocks.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mqi-doc-panel" id="capture">
+          <div class="mqi-doc-panel-header">Workflow patterns</div>
+          <div class="mqi-doc-panel-body">
+            <div class="row g-3 row-cols-1 row-cols-md-2 row-cols-xl-4">
+              <div class="col"><div class="mqi-demo-card h-100"><span class="mqi-meta-label">Capture</span><div class="mqi-upload-demo"><div class="fw-bold mb-2">Drop files to start the order form</div><div class="text-muted small mb-3">Upload first. Draft second.</div><button class="btn btn-primary btn-sm">Import files</button></div></div></div>
+              <div class="col"><div class="mqi-demo-card h-100"><span class="mqi-meta-label">Confirm</span><div class="mqi-note">Show blockers, ambiguity, and source detail without overwhelming the user.</div></div></div>
+              <div class="col"><div class="mqi-demo-card h-100"><span class="mqi-meta-label">Optimize</span><div class="mqi-note">Target margin first. Approve, revise, or compare path.</div></div></div>
+              <div class="col"><div class="mqi-demo-card h-100"><span class="mqi-meta-label">Present</span><div class="mqi-note">Clean customer quote. Scope, price, lead time, next step.</div></div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mqi-doc-panel">
+          <div class="mqi-doc-panel-header">Code note</div>
+          <div class="mqi-doc-panel-body">
+            <div class="mqi-code">Bootstrap 5.3 is included via CDN on this page and themed through MQI root variables + targeted component overrides. This page is now the completed HTML reference for MQI foundations, component coverage, and workflow pattern direction.</div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal fade" id="mqiModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">MQI modal</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">Use modals for destructive confirmation, escalation, or focused review only.</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Confirm</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="mqiOffcanvas">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">MQI side review</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">Use offcanvas for supporting context without fully leaving the current task.</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].forEach(el => new bootstrap.Tooltip(el))
+    [...document.querySelectorAll('[data-bs-toggle="popover"]')].forEach(el => new bootstrap.Popover(el))
+  </script>
+</body>
+</html>
