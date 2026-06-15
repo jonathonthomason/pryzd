@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { WorkflowProgress } from '../components/WorkflowProgress'
-import { manufacturers, orderSummary, scenarioRecommendations, type DecisionScenario } from '../data/decisionFlow'
+import { orderSummary, readinessDimensions, scenarioRecommendations, type DecisionScenario } from '../data/decisionFlow'
 
-type EvaluationStage = {
+type AnalysisStage = {
   label: string
   note: string
   input: string[]
@@ -11,45 +11,45 @@ type EvaluationStage = {
   outcome: string
 }
 
-const evaluationStages: EvaluationStage[] = [
+const analysisStages: AnalysisStage[] = [
   {
-    label: 'Requirements normalization',
-    note: 'Core commercial and manufacturing inputs locked for comparison.',
-    input: ['Confirmed material', 'Confirmed finish strategy', 'Required volume', 'Lead target'],
-    analysis: 'The request is normalized into a manufacturer-ready decision package with material, finish, volume, timing, and alternate strategy aligned.',
-    outcome: 'Supplier comparison can proceed without reinterpreting the source package.',
+    label: 'Production package aligned',
+    note: 'Requirements, assumptions, and evidence are packaged into one manufacturer-specific view.',
+    input: ['Confirmed material + finish strategy', 'Required quantity', 'Requested delivery target', 'Approved assumptions'],
+    analysis: 'The RFQ is normalized so the manufacturer is not reinterpreting scattered notes, files, and exceptions during quoting.',
+    outcome: 'The order is ready for production-readiness checks.',
   },
   {
-    label: 'Capacity analysis',
-    note: 'Production window compared against qualified supplier availability.',
-    input: ['Required quantity', 'Required lead time'],
-    analysis: 'North Ridge has 31% unused capacity during the requested production window. Monterrey remains viable but with a narrower slot. Pearl River can absorb the volume, but at a slower release cadence.',
-    outcome: 'North Ridge shows the highest schedule confidence.',
+    label: 'Material readiness checked',
+    note: 'Material allocation and replenishment exposure are reviewed for this order window.',
+    input: ['Material requirement', 'Current allocation status', 'Replenishment risk'],
+    analysis: 'Usable stock is already allocated for this quote window, which removes the biggest near-term fulfillment unknown.',
+    outcome: 'Material readiness is strong.',
   },
   {
-    label: 'Inventory analysis',
-    note: 'Material readiness compared across candidate manufacturers.',
-    input: ['Material requirement', 'Allocation status', 'Replenishment exposure'],
-    analysis: 'North Ridge already holds usable stock. Monterrey has reserved allocation. Pearl River can source the material, but replenishment timing adds more uncertainty to the promise date.',
-    outcome: 'North Ridge and Monterrey stay commercially credible; Pearl River weakens on commitment confidence.',
+    label: 'Capacity readiness checked',
+    note: 'The requested quantity is tested against current slot availability and line headroom.',
+    input: ['Required quantity', 'Current slot plan', 'Line utilization'],
+    analysis: 'The line can absorb this volume without pushing another committed order out of sequence.',
+    outcome: 'Capacity supports quoting now.',
   },
   {
-    label: 'Lead time analysis',
-    note: 'Transit and internal production timing consolidated into one decision view.',
-    input: ['Lead target', 'Production start window', 'Transit pattern'],
-    analysis: 'North Ridge matches the 18-day target cleanly. Monterrey can support a 23-day path. Pearl River falls to 32 days once transit variability is included.',
-    outcome: 'North Ridge preserves the requested delivery posture.',
+    label: 'Lead-time readiness checked',
+    note: 'Internal production timing and promise risk are combined into one fulfillment view.',
+    input: ['Requested delivery date', 'Current slot plan', 'Transit posture'],
+    analysis: 'The current plan can support an 18-day quote, with an optional 19-day protected posture if the team wants more schedule buffer.',
+    outcome: 'The requested commitment is supportable.',
   },
   {
-    label: 'Commercial analysis',
-    note: 'Margin, risk, and commitment posture weighed together.',
-    input: ['Target margin', 'Risk tolerance', 'Delivery confidence'],
-    analysis: 'Pearl River produces the highest margin, but it carries the weakest schedule and logistics confidence. Monterrey improves economics with a thinner buffer. North Ridge clears the target while protecting the customer promise.',
-    outcome: 'North Ridge is the strongest overall business decision for this order.',
+    label: 'Commercial readiness checked',
+    note: 'Margin, assumptions, and volatility exposure are reviewed before recommendation.',
+    input: ['Target margin', 'Approved assumptions', 'Price sensitivity', 'Volatility posture'],
+    analysis: 'The order is production-ready, the margin target is achievable, and the remaining decision is how aggressively to quote.',
+    outcome: 'The workspace can recommend a quote posture with evidence and risk visible.',
   },
 ]
 
-function StageRow({ stage, index, activeIndex }: { stage: EvaluationStage; index: number; activeIndex: number }) {
+function StageRow({ stage, index, activeIndex }: { stage: AnalysisStage; index: number; activeIndex: number }) {
   const status = index < activeIndex ? 'complete' : index === activeIndex ? 'active' : 'pending'
 
   return (
@@ -63,7 +63,7 @@ function StageRow({ stage, index, activeIndex }: { stage: EvaluationStage; index
   )
 }
 
-function StageWorkspace({ stage, active }: { stage: EvaluationStage; active: boolean }) {
+function StageWorkspace({ stage, active }: { stage: AnalysisStage; active: boolean }) {
   return (
     <div className={`analysis-stage-card${active ? ' active' : ''}`}>
       <div className="analysis-stage-head">
@@ -115,11 +115,9 @@ export function ManufacturerEvaluationPage() {
   const [showScoringBreakdown, setShowScoringBreakdown] = useState(false)
 
   const recommendation = scenarioRecommendations[scenario]
-  const selectedManufacturer = manufacturers.find((item) => item.id === recommendation.recommendedManufacturerId) ?? manufacturers[0]
-
-  const progress = useMemo(() => Math.min(100, Math.round(((activeIndex + 1) / evaluationStages.length) * 100)), [activeIndex])
-  const complete = activeIndex >= evaluationStages.length - 1
-  const visibleStages = evaluationStages.slice(0, activeIndex + 1)
+  const progress = useMemo(() => Math.min(100, Math.round(((activeIndex + 1) / analysisStages.length) * 100)), [activeIndex])
+  const complete = activeIndex >= analysisStages.length - 1
+  const visibleStages = analysisStages.slice(0, activeIndex + 1)
 
   useEffect(() => {
     setActiveIndex(0)
@@ -128,11 +126,9 @@ export function ManufacturerEvaluationPage() {
 
   useEffect(() => {
     if (complete) return
-
     const timer = window.setTimeout(() => {
-      setActiveIndex((current) => Math.min(current + 1, evaluationStages.length - 1))
+      setActiveIndex((current) => Math.min(current + 1, analysisStages.length - 1))
     }, 550)
-
     return () => window.clearTimeout(timer)
   }, [activeIndex, complete])
 
@@ -140,20 +136,20 @@ export function ManufacturerEvaluationPage() {
     <>
       <div className="topbar">
         <div className="topbar-left">
-          <strong>Manufacturer Evaluation</strong>
+          <strong>Production Readiness Analysis</strong>
           <span className="badge">Transparent reasoning</span>
         </div>
         <div className="topbar-right">MQI System</div>
       </div>
 
       <div className="content">
-        <WorkflowProgress label="Manufacturer Evaluation" />
+        <WorkflowProgress label="4. Production Readiness Analysis" />
 
-        <h1>Evaluating Manufacturing Options</h1>
-        <div className="intro">Watch the system build a recommendation step by step, expose what it considered, and compare candidate manufacturers in one decision workspace.</div>
+        <h1>Analyze production readiness</h1>
+        <div className="intro">Assess whether this single manufacturer can confidently produce, fulfill, and support the quote before commercial recommendations are made.</div>
 
         <div className="state-toolbar">
-          <span className="toolbar-label">Decision posture</span>
+          <span className="toolbar-label">Quote posture</span>
           {(Object.entries(scenarioRecommendations) as [DecisionScenario, typeof recommendation][]).map(([name, item]) => (
             <button
               key={name}
@@ -169,12 +165,12 @@ export function ManufacturerEvaluationPage() {
         <div className="evaluation-overlay panel">
           <div className="panel-header evaluation-header">
             <div>
-              <div className="panel-title">{recommendation.label}</div>
-              <div className="sub">{orderSummary.customer} · {orderSummary.part} · {orderSummary.quantity.toLocaleString()} units</div>
+              <div className="panel-title">{recommendation.posture}</div>
+              <div className="sub">{orderSummary.customer} · {orderSummary.part} · {orderSummary.quantity.toLocaleString()} units · {orderSummary.manufacturer}</div>
             </div>
             <div className="evaluation-meta">
               <strong>{progress}% complete</strong>
-              <span>{complete ? 'Comparison complete' : 'Reasoning in progress'}</span>
+              <span>{complete ? 'Readiness analysis complete' : 'Analysis in progress'}</span>
             </div>
           </div>
 
@@ -186,39 +182,33 @@ export function ManufacturerEvaluationPage() {
             <div className="evaluation-layout evaluation-workspace-layout">
               <section className="evaluation-stage-column">
                 <div className="evaluation-stage-list">
-                  {evaluationStages.map((stage, index) => (
+                  {analysisStages.map((stage, index) => (
                     <StageRow key={stage.label} stage={stage} index={index} activeIndex={activeIndex} />
                   ))}
                 </div>
 
                 <div className="evaluation-scorecard-card">
-                  <div className="confirm-section-title">Manufacturer scorecard</div>
+                  <div className="confirm-section-title">Readiness scorecard</div>
                   <div className="scorecard-table-wrap">
                     <table className="scorecard-table">
                       <thead>
                         <tr>
-                          <th>Manufacturer</th>
-                          <th>Capacity</th>
-                          <th>Inventory</th>
-                          <th>Lead</th>
-                          <th>Margin</th>
-                          <th>Risk</th>
-                          <th>Score</th>
+                          <th>Readiness dimension</th>
+                          <th>Status</th>
+                          <th>Evidence</th>
+                          <th>Confidence</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {manufacturers.map((manufacturer) => (
-                          <tr key={manufacturer.id} className={manufacturer.id === selectedManufacturer.id ? 'is-leading' : ''}>
+                        {readinessDimensions.map((dimension) => (
+                          <tr key={dimension.label}>
                             <td>
-                              <strong>{manufacturer.name}</strong>
-                              <div className="scorecard-sub">{manufacturer.region}</div>
+                              <strong>{dimension.label}</strong>
+                              <div className="scorecard-sub">{dimension.note}</div>
                             </td>
-                            <td>{manufacturer.capacity}</td>
-                            <td>{manufacturer.inventory}</td>
-                            <td>{manufacturer.leadTimeDays} days</td>
-                            <td>{manufacturer.marginPct}%</td>
-                            <td>{manufacturer.commercialRisk}</td>
-                            <td>{manufacturer.confidencePct}</td>
+                            <td>{dimension.label === 'Commercial readiness' ? recommendation.badge : 'Ready'}</td>
+                            <td>{dimension.label === 'Lead-time readiness' ? `${recommendation.leadTimeDays}-day quote plan` : 'Source + operator-confirmed'}</td>
+                            <td>{dimension.label === 'Commercial readiness' ? `${recommendation.quoteConfidencePct}%` : `${Math.max(88, recommendation.fulfillmentReadinessPct - 2)}%`}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -232,13 +222,13 @@ export function ManufacturerEvaluationPage() {
                       onClick={() => setShowScoringBreakdown((current) => !current)}
                       aria-expanded={showScoringBreakdown}
                     >
-                      <span>View Scoring Breakdown</span>
+                      <span>View analysis breakdown</span>
                       <span className={`scorecard-breakdown-chevron${showScoringBreakdown ? ' open' : ''}`}>⌄</span>
                     </button>
 
                     {showScoringBreakdown ? (
                       <div className="scorecard-breakdown-body">
-                        <div className="confirm-section-title">Scoring Breakdown</div>
+                        <div className="confirm-section-title">Analysis breakdown</div>
                         <div className="analysis-stage-stack">
                           {visibleStages.map((stage, index) => (
                             <StageWorkspace
@@ -258,27 +248,27 @@ export function ManufacturerEvaluationPage() {
                 {complete ? (
                   <>
                     <div className="status-box good">
-                      <strong>Order under evaluation</strong>
+                      <strong>Order under analysis</strong>
                       {orderSummary.material} · {orderSummary.finish} · deliver to {orderSummary.destination} by {orderSummary.requiredDeliveryDate}
                     </div>
 
-                    <div className={`status-box ${complete ? 'good' : 'warn'}`}>
-                      <strong>{complete ? 'Recommendation ready' : 'Analysis building'}</strong>
-                      {complete ? recommendation.headline : 'The workspace is comparing qualified manufacturers across capacity, inventory, lead, margin, and risk.'}
+                    <div className="status-box good">
+                      <strong>Production readiness result</strong>
+                      {recommendation.headline}
                     </div>
 
                     <div className="evidence-stack">
                       <div className="state good">
-                        <strong>Leading candidate</strong>
-                        {selectedManufacturer.name} · {selectedManufacturer.leadTimeDays} days · {selectedManufacturer.marginPct}% margin
+                        <strong>Manufacturer in scope</strong>
+                        {orderSummary.manufacturer} only — no vendor selection or routing is exposed in the product story.
                       </div>
                       <div className="state good">
-                        <strong>Comparison set</strong>
-                        {manufacturers.length} candidate manufacturers remain in commercial consideration
+                        <strong>Fulfillment readiness</strong>
+                        {recommendation.fulfillmentReadinessPct}% · slot, material, and timing support the quote posture.
                       </div>
-                      <div className={`state ${selectedManufacturer.risk === 'Low' ? 'good' : 'warn'}`}>
-                        <strong>Current posture</strong>
-                        {selectedManufacturer.rationale}
+                      <div className={`state ${recommendation.quoteConfidencePct >= 90 ? 'good' : 'warn'}`}>
+                        <strong>Quote confidence</strong>
+                        {recommendation.quoteConfidencePct}% · assumptions and volatility tradeoffs are visible before recommendation.
                       </div>
                     </div>
                   </>
@@ -295,8 +285,8 @@ export function ManufacturerEvaluationPage() {
                 )}
 
                 <div className="actions evaluation-sticky-cta">
-                  <Link className="btn primary" style={{ pointerEvents: complete ? 'auto' : 'none', opacity: complete ? '1' : '.45' }} to="/recommendation-workspace">Open recommendation workspace</Link>
-                  <button className="btn secondary" type="button" onClick={() => setActiveIndex(0)}>Re-run evaluation</button>
+                  <Link className="btn primary" style={{ pointerEvents: complete ? 'auto' : 'none', opacity: complete ? '1' : '.45' }} to="/quote-recommendation">Open quote recommendation</Link>
+                  <button className="btn secondary" type="button" onClick={() => setActiveIndex(0)}>Re-run analysis</button>
                   <Link className="btn ghost" to="/confirm">Back</Link>
                 </div>
               </aside>

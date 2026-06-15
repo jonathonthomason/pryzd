@@ -718,7 +718,7 @@
             <div class="as-is-card">
               <div class="icon">🤝</div>
               <h5>People align on feasibility</h5>
-              <p>Sales, sourcing, and operations trade messages to validate which manufacturer can actually support the order.</p>
+              <p>Sales, sourcing, and operations trade messages to validate whether the current manufacturing plan can actually support the order.</p>
             </div>
             <div class="process-arrow">→</div>
             <div class="as-is-card">
@@ -787,7 +787,7 @@
           <div>
             <h2>MQI - MARGIN STABILIZATION - SLIDE 4</h2>
             <h3>Designing the Workflow Before Exposing the Complexity</h3>
-            <p class="subtitle">The operator experiences a clear decision workflow, while a narrow set of specialized agents handles complexity behind the scenes.</p>
+            <p class="subtitle">The operator experiences a clear decision workflow, while system services handle complexity behind the scenes.</p>
           </div>
           <div class="slide-number">04</div>
         </div>
@@ -795,28 +795,30 @@
           <div class="panel">
             <h4>Operator-facing workflow</h4>
             <div class="workflow-diagram">
-              <div class="workflow-step"><div class="step-index">1</div><div class="icon">📥</div><h5>Order Submitted</h5><p>Customer files and requirements enter the system.</p></div>
-              <div class="workflow-step"><div class="step-index">2</div><div class="icon">🔍</div><h5>Requirements Evaluated</h5><p>Inputs are structured and ambiguity is surfaced early.</p></div>
-              <div class="workflow-step"><div class="step-index">3</div><div class="icon">🏭</div><h5>Manufacturers Assessed</h5><p>Viable options are compared on cost, capacity, and timing.</p></div>
-              <div class="workflow-step"><div class="step-index">4</div><div class="icon">🧠</div><h5>Recommendation Generated</h5><p>A best-fit path is assembled with rationale and confidence.</p></div>
-              <div class="workflow-step"><div class="step-index">5</div><div class="icon">✅</div><h5>Human Review</h5><p>The final decision stays with the operator.</p></div>
-              <div class="workflow-step"><div class="step-index">6</div><div class="icon">📨</div><h5>Quote Sent</h5><p>The customer receives a fast, credible response.</p></div>
+              <div class="workflow-step"><div class="step-index">1</div><div class="icon">📥</div><h5>RFQ Intake</h5><p>Customer files and requirements enter the system.</p></div>
+              <div class="workflow-step"><div class="step-index">2</div><div class="icon">🔎</div><h5>Requirements Understanding</h5><p>Inputs are structured and ambiguity is surfaced early.</p></div>
+              <div class="workflow-step"><div class="step-index">3</div><div class="icon">✅</div><h5>Requirements Review</h5><p>Human assumptions are confirmed before quoting.</p></div>
+              <div class="workflow-step"><div class="step-index">4</div><div class="icon">🏭</div><h5>Production Readiness Analysis</h5><p>One manufacturer’s material, capacity, quality, and timing posture are evaluated.</p></div>
+              <div class="workflow-step"><div class="step-index">5</div><div class="icon">📈</div><h5>Commercial Analysis</h5><p>Margin, volatility, and commitment tradeoffs are scored.</p></div>
+              <div class="workflow-step"><div class="step-index">6</div><div class="icon">🧠</div><h5>Quote Recommendation</h5><p>A recommended quote posture is assembled with rationale and confidence.</p></div>
+              <div class="workflow-step"><div class="step-index">7</div><div class="icon">🛡️</div><h5>Quote Review</h5><p>The operator reviews evidence, assumptions, and risk before approval.</p></div>
+              <div class="workflow-step"><div class="step-index">8</div><div class="icon">📨</div><h5>Quote Delivery</h5><p>The customer receives a fast, credible response.</p></div>
             </div>
           </div>
           <div class="panel">
             <h4>Behind the workflow</h4>
             <div class="chain-diagram">
-              <div class="agent-node"><div class="icon">📥</div><h5>Intake Agent</h5><p>Extracts requirements from submitted files.</p></div>
-              <div class="agent-node"><div class="icon">🏭</div><h5>Manufacturer Quote Agent</h5><p>Pulls current supplier pricing.</p></div>
-              <div class="agent-node"><div class="icon">🧾</div><h5>Cost Inputs Agent</h5><p>Adds logistics, lead time, and internal costs.</p></div>
-              <div class="agent-node"><div class="icon">📈</div><h5>Margin Optimization Agent</h5><p>Applies pricing guardrails and commercial logic.</p></div>
-              <div class="agent-node"><div class="icon">🧠</div><h5>Decision Layer</h5><p>Builds the recommendation with rationale.</p></div>
-              <div class="agent-node"><div class="icon">✅</div><h5>Human Approver</h5><p>Sends the quote with accountability.</p></div>
+              <div class="agent-node"><div class="icon">📥</div><h5>Intake processing</h5><p>Extracts requirements from submitted files.</p></div>
+              <div class="agent-node"><div class="icon">🏭</div><h5>Production readiness checks</h5><p>Pull current material, capacity, timing, and quality signals.</p></div>
+              <div class="agent-node"><div class="icon">🧾</div><h5>Cost + fulfillment inputs</h5><p>Add logistics, lead time, and internal cost context.</p></div>
+              <div class="agent-node"><div class="icon">📈</div><h5>Commercial logic</h5><p>Applies pricing guardrails and volatility-aware quote logic.</p></div>
+              <div class="agent-node"><div class="icon">🧠</div><h5>Recommendation layer</h5><p>Builds the quote recommendation with rationale.</p></div>
+              <div class="agent-node"><div class="icon">✅</div><h5>Human approver</h5><p>Sends the quote with accountability.</p></div>
             </div>
           </div>
           <div class="callout" style="grid-column: 1 / -1;">
             <h4>Design choice</h4>
-            <p>Workflow first for the user. Specialized agents behind the scenes for modularity, trust, and maintainability.</p>
+            <p>Workflow first for the user. Decision services behind the scenes for modularity, trust, and maintainability.</p>
           </div>
         </div>
         <div class="note"><strong>Speaker note:</strong> This keeps the architecture, but makes the product flow legible. The audience should understand the workflow first and the agentic system second.</div>
@@ -959,8 +961,8 @@
             <div class="journey-lane">
               <h5>Sales Rep Journey</h5>
               <div class="journey-steps">
-                <div class="journey-step"><strong>Receive Order</strong><span>Start from structured, agent-extracted requirements.</span></div>
-                <div class="journey-step"><strong>Review Inputs</strong><span>See supplier price, costs, logistics, and confidence.</span></div>
+                <div class="journey-step"><strong>Receive Order</strong><span>Start from structured, source-grounded requirements.</span></div>
+                <div class="journey-step"><strong>Review Inputs</strong><span>See readiness, cost, timing, and confidence.</span></div>
                 <div class="journey-step"><strong>Approve Quote</strong><span>Check margin, risk, and recommendation rationale.</span></div>
                 <div class="journey-step"><strong>Send Quote</strong><span>Respond with confidence and speed.</span></div>
               </div>
@@ -1001,7 +1003,7 @@
                 <div class="architecture-node"><strong>Intake Agent</strong><span>Extracts files and requirements</span></div>
                 <div class="architecture-node"><strong>Pricing Agents</strong><span>Manufacturer, cost, and margin logic</span></div>
                 <div class="architecture-node"><strong>Skills</strong><span>Reusable workflows and prompts</span></div>
-                <div class="architecture-node"><strong>Orchestrator</strong><span>Chains agents and manages state</span></div>
+                <div class="architecture-node"><strong>Decision coordination</strong><span>Combines evidence, confidence, and review state</span></div>
               </div>
             </div>
             <div class="architecture-arrow">↓</div>
@@ -1017,7 +1019,7 @@
           </div>
           <div class="callout">
             <h4>Architecture takeaway</h4>
-            <p>The same system supports quote generation now and platform evolution later: workflow, agents, data, and UI foundations scale together.</p>
+            <p>The same system supports quote generation now and platform evolution later: workflow, decision services, data, and UI foundations scale together.</p>
           </div>
         </div>
         <div class="note"><strong>Speaker note:</strong> Use this slide to show systems thinking, but keep the story clear: architecture matters because it supports faster, safer decisions and future product growth.</div>
@@ -1028,7 +1030,7 @@
           <div>
             <h2>MQI - MARGIN STABILIZATION - SLIDE 9</h2>
             <h3>From Quoting Workflow to Manufacturing Intelligence Platform</h3>
-            <p class="subtitle">The quoting workflow is the wedge; the broader opportunity is a manufacturing intelligence platform that scales decision support across sourcing, pricing, and supplier performance.</p>
+            <p class="subtitle">The quoting workflow is the wedge; the broader opportunity is a manufacturing intelligence platform that scales decision support across readiness, pricing, and fulfillment confidence.</p>
           </div>
           <div class="slide-number">09</div>
         </div>
@@ -1046,7 +1048,7 @@
           <div class="panel">
             <h4>Presenter signal</h4>
             <ul>
-              <li>Framed an ambiguous business problem</li>
+              <li>Framed an ubiquitous business problem</li>
               <li>Designed a workflow before overbuilding architecture</li>
               <li>Used AI as a product design collaborator</li>
               <li>Created a platform-ready system, not a one-off flow</li>

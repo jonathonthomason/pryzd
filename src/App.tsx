@@ -15,9 +15,12 @@ export default function App() {
         <Route path="/capture" element={<CapturePage />} />
         <Route path="/confirm" element={<ConfirmPage />} />
         <Route path="/manufacturer-evaluation" element={<ManufacturerEvaluationPage />} />
+        <Route path="/production-readiness-analysis" element={<ManufacturerEvaluationPage />} />
         <Route path="/recommendation-workspace" element={<RecommendationWorkspacePage />} />
-        <Route path="/optimize" element={<Navigate to="/recommendation-workspace" replace />} />
+        <Route path="/quote-recommendation" element={<RecommendationWorkspacePage />} />
+        <Route path="/optimize" element={<Navigate to="/quote-recommendation" replace />} />
         <Route path="/customer-quote" element={<CustomerQuotePage />} />
+        <Route path="/quote-delivery" element={<CustomerQuotePage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

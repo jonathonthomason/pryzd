@@ -283,8 +283,8 @@ export function CapturePage() {
       <div className="content">
         <WorkflowProgress label="Capture" />
 
-        <h1>Order entry</h1>
-        <div className="intro">Start with source material. Review what the system extracted, inspect the evidence, and resolve what remains uncertain.</div>
+        <h1>RFQ intake</h1>
+        <div className="intro">Start with source material. Extract the request, inspect the evidence, and surface anything that could weaken quote confidence downstream.</div>
 
         <div className="state-toolbar">
           <span className="toolbar-label">Capture states</span>
@@ -419,7 +419,7 @@ export function CapturePage() {
               </div>
 
               <div className="actions">
-                <Link className="btn primary" style={{ pointerEvents: reviewEnabled ? 'auto' : 'none', opacity: reviewEnabled ? '1' : '.45' }} to="/confirm">Review request</Link>
+                <Link className="btn primary" style={{ pointerEvents: reviewEnabled ? 'auto' : 'none', opacity: reviewEnabled ? '1' : '.45' }} to="/confirm">Move to requirements review</Link>
                 <button className="btn secondary" type="button" onClick={() => applyView(state.upload === 'loaded' ? 'partial' : 'empty')}>Reset current state</button>
                 <Link className="btn ghost" to="/">Back</Link>
               </div>
@@ -428,7 +428,7 @@ export function CapturePage() {
 
           <aside className="panel">
             <div className="panel-header">
-              <div className="panel-title">Readiness</div>
+              <div className="panel-title">Quote confidence posture</div>
             </div>
             <div className="panel-body">
               <div className="list">

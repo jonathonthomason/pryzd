@@ -54,8 +54,8 @@ const states: Record<ConfirmState, ConfirmConfig> = {
       { label: 'Packaging', value: 'Reseller-label-ready', source: 'customer-email.msg' },
     ],
     assumption: {
-      title: 'Approved Finish Alternate?',
-      reason: 'Required because one manufacturer lacks primary finish capacity.',
+      title: 'Approved finish alternate?',
+      reason: 'Required because the primary finish path may tighten if the current slot changes.',
       options: [
         { label: 'Type II acceptable', value: 'type-ii' },
         { label: 'No alternate allowed', value: 'no-alternate' },
@@ -69,15 +69,15 @@ const states: Record<ConfirmState, ConfirmConfig> = {
       { label: 'Lead target confirmed', done: true },
       { label: 'Alternate strategy confirmed', done: false },
     ],
-    signal: ['Decision pending', 'Commercial evaluation can proceed once the finish alternate policy is set.', 'warn'],
-    trace: 'Normalized request → compared supplier finish capacity → alternate finish decision required.',
+    signal: ['Decision pending', 'Readiness analysis can proceed once the finish alternate policy is set.', 'warn'],
+    trace: 'Normalized request → checked finish capacity posture → alternate finish decision required.',
     evaluationEnabled: false,
   },
   lead: {
     label: 'Lead target review',
     readinessLabel: 'Commercial review needed',
     readinessScore: '78%',
-    readinessSummary: 'Ready for evaluation once delivery target is confirmed against supplier options.',
+    readinessSummary: 'Ready for analysis once the delivery target is confirmed against the current production plan.',
     confirmedInputs: [
       { label: 'Material', value: '6061 Aluminum', source: 'housing-rev-b.step' },
       { label: 'Finish', value: 'Black anodize', source: 'finish-spec.pdf' },
@@ -87,7 +87,7 @@ const states: Record<ConfirmState, ConfirmConfig> = {
     ],
     assumption: {
       title: 'Lead target acceptable?',
-      reason: 'Required because the fastest qualified manufacturer is projecting 20 days instead of 18.',
+      reason: 'Required because the current production plan may need a 20-day commitment instead of 18.',
       options: [
         { label: '18 days required', value: 'strict-18' },
         { label: '20 days acceptable', value: 'allow-20' },
@@ -102,14 +102,14 @@ const states: Record<ConfirmState, ConfirmConfig> = {
       { label: 'Alternate strategy confirmed', done: true },
     ],
     signal: ['Delivery decision pending', 'Commercial evaluation depends on whether schedule flexibility is allowed.', 'warn'],
-    trace: 'Normalized request → compared supplier lead projections → delivery policy requires operator direction.',
+    trace: 'Normalized request → checked lead-time posture → delivery policy requires operator direction.',
     evaluationEnabled: false,
   },
   capacity: {
     label: 'Capacity tradeoff',
     readinessLabel: 'Commercial review needed',
     readinessScore: '86%',
-    readinessSummary: 'Ready for evaluation once the operator confirms how much supplier concentration is acceptable.',
+    readinessSummary: 'Ready for analysis once the operator confirms how firmly to commit the current production slot.',
     confirmedInputs: [
       { label: 'Material', value: '6061 Aluminum', source: 'housing-rev-b.step' },
       { label: 'Finish', value: 'Black anodize', source: 'finish-spec.pdf' },
@@ -118,13 +118,13 @@ const states: Record<ConfirmState, ConfirmConfig> = {
       { label: 'Alternate strategy', value: 'Type II acceptable if needed', source: 'operator assumption' },
     ],
     assumption: {
-      title: 'Single-source acceptable?',
-      reason: 'Required because one manufacturer is clearly best on cost but creates concentration risk.',
+      title: 'Commit the current production slot?',
+      reason: 'Required because quoting against the current slot improves confidence but reduces flexibility for later repricing.',
       options: [
-        { label: 'Single-source acceptable', value: 'single-source' },
-        { label: 'Require backup source', value: 'backup-required' },
+        { label: 'Commit the slot now', value: 'commit-slot' },
+        { label: 'Keep flexibility', value: 'keep-flexibility' },
       ],
-      selected: 'backup-required',
+      selected: 'keep-flexibility',
     },
     readinessItems: [
       { label: 'Material confirmed', done: true },
@@ -133,8 +133,8 @@ const states: Record<ConfirmState, ConfirmConfig> = {
       { label: 'Lead target confirmed', done: true },
       { label: 'Alternate strategy confirmed', done: true },
     ],
-    signal: ['Commercial choice available', 'All core signals are confirmed; remaining choice is portfolio strategy.', 'good'],
-    trace: 'Normalized request → ranked supplier set → surfaced concentration tradeoff for operator preference.',
+    signal: ['Commercial choice available', 'All core signals are confirmed; remaining choice is how aggressive the quote posture should be.', 'good'],
+    trace: 'Normalized request → checked slot commitment posture → surfaced quote-confidence tradeoff for operator preference.',
     evaluationEnabled: true,
   },
   source: {
@@ -173,7 +173,7 @@ const states: Record<ConfirmState, ConfirmConfig> = {
     label: 'Ready',
     readinessLabel: 'Ready for evaluation',
     readinessScore: '100%',
-    readinessSummary: 'Commercial inputs are confirmed and the request is ready for manufacturer evaluation.',
+    readinessSummary: 'Commercial inputs are confirmed and the request is ready for production readiness analysis.',
     confirmedInputs: [
       { label: 'Material', value: '6061 Aluminum', source: 'housing-rev-b.step' },
       { label: 'Finish', value: 'Black anodize with Type II alternate if needed', source: 'finish-spec.pdf + operator assumption' },
@@ -197,8 +197,8 @@ const states: Record<ConfirmState, ConfirmConfig> = {
       { label: 'Lead target confirmed', done: true },
       { label: 'Alternate strategy confirmed', done: true },
     ],
-    signal: ['Ready for evaluation', 'Commercial readiness is complete for manufacturer evaluation.', 'good'],
-    trace: 'Normalized request → business assumptions confirmed → ready for supplier evaluation.',
+    signal: ['Ready for analysis', 'Commercial readiness is complete for production readiness analysis.', 'good'],
+    trace: 'Normalized request → business assumptions confirmed → ready for production readiness analysis.',
     evaluationEnabled: true,
   },
 }
@@ -247,8 +247,8 @@ export function ConfirmPage() {
       <div className="content">
         <WorkflowProgress label="Confirm" />
 
-        <h1>Confirm request</h1>
-        <div className="intro">Review what the system believes is true, confirm the business assumptions that require operator judgment, and move to evaluation when the commercial picture is complete.</div>
+        <h1>Requirements understanding + review</h1>
+        <div className="intro">Review what the system believes is true, confirm the business assumptions that require operator judgment, and move forward when the request is solid enough for production-readiness analysis.</div>
 
         <div className="state-toolbar">
           <span className="toolbar-label">Confirm states</span>
@@ -288,7 +288,7 @@ export function ConfirmPage() {
               </div>
 
               <div className="confirm-section-card assumption-card">
-                <div className="confirm-section-title">Human Assumptions Needed</div>
+                <div className="confirm-section-title">Human assumptions needed</div>
                 <div className="assumption-title">{state.assumption.title}</div>
                 <div className="assumption-reason">{state.assumption.reason}</div>
                 <div className="assumption-options">
@@ -319,14 +319,14 @@ export function ConfirmPage() {
               </div>
 
               <div className="actions">
-                <Link className="btn primary" style={{ pointerEvents: state.evaluationEnabled ? 'auto' : 'none', opacity: state.evaluationEnabled ? '1' : '.45' }} to="/manufacturer-evaluation">Evaluate manufacturers</Link>
+                <Link className="btn primary" style={{ pointerEvents: state.evaluationEnabled ? 'auto' : 'none', opacity: state.evaluationEnabled ? '1' : '.45' }} to="/production-readiness-analysis">Open production readiness analysis</Link>
                 <Link className="btn secondary" to="/capture">Back</Link>
               </div>
             </div>
           </section>
 
           <aside className="panel">
-            <div className="panel-header"><div className="panel-title">Commercial signal</div></div>
+            <div className="panel-header"><div className="panel-title">Readiness signal</div></div>
             <div className="panel-body">
               <div className="list">
                 <SignalCard data={state.signal} />

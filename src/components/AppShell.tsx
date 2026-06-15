@@ -2,11 +2,11 @@ import { useEffect } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 
 const workflowNav = [
-  { to: '/capture', label: 'Capture' },
-  { to: '/confirm', label: 'Confirm' },
-  { to: '/manufacturer-evaluation', label: 'Evaluation' },
-  { to: '/recommendation-workspace', label: 'Recommendation' },
-  { to: '/customer-quote', label: 'Present' },
+  { to: '/capture', label: '1. RFQ Intake' },
+  { to: '/confirm', label: '2–3. Requirements Understanding + Review' },
+  { to: '/production-readiness-analysis', label: '4. Production Readiness Analysis' },
+  { to: '/quote-recommendation', label: '5–7. Commercial Analysis + Recommendation + Review' },
+  { to: '/quote-delivery', label: '8. Quote Delivery' },
 ] as const
 
 const systemNav = [
@@ -27,8 +27,8 @@ export function AppShell() {
         <NavLink to="/" end className="sidebar-header">
           <div className="logo">MQI</div>
           <div>
-            <div className="sidebar-title">Decision prototype</div>
-            <div className="sidebar-sub">Operator workflow</div>
+            <div className="sidebar-title">Production Readiness Intelligence</div>
+            <div className="sidebar-sub">Single-manufacturer quote workflow</div>
           </div>
         </NavLink>
 
@@ -55,7 +55,7 @@ export function AppShell() {
             </a>
           ))}
           <NavLink to="/" end className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
-            Prototype home
+            Workflow home
           </NavLink>
         </div>
       </aside>

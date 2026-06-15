@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { WorkflowProgress } from '../components/WorkflowProgress'
-import { manufacturers, orderSummary, scenarioRecommendations, type DecisionScenario } from '../data/decisionFlow'
+import { orderSummary, scenarioRecommendations, type DecisionScenario } from '../data/decisionFlow'
 
 type QuoteState = 'ready' | 'clarification' | 'alternate' | 'expired'
 
@@ -24,8 +24,8 @@ const states: Record<QuoteState, QuoteConfig> = {
     title: 'Customer quote',
     meta: 'Recommendation approved and converted into customer-facing output',
     status: ['Ready', 'Recommendation approved. Quote is ready to present.', 'good'],
-    recommendation: 'Generated from the approved recommendation path',
-    note: 'Pricing assumes the approved tolerance profile and committed production slot.',
+    recommendation: 'Generated from the approved quote recommendation',
+    note: 'Pricing assumes the approved tolerance profile, packaging posture, and current production slot.',
     primary: 'Send quote',
     canApprove: true,
   },
@@ -44,9 +44,9 @@ const states: Record<QuoteState, QuoteConfig> = {
     label: 'Alternate quote option',
     badge: 'Alternate available',
     title: 'Alternate customer quote',
-    meta: 'Generated from an alternate recommendation path',
-    status: ['Alternate quote', 'Customer can review a lower-price option with different delivery tradeoffs.', 'warn'],
-    recommendation: 'Generated from an alternate recommendation after comparison review',
+    meta: 'Generated from a different approved quote posture',
+    status: ['Alternate quote', 'Customer can review a different balance of price and commitment confidence.', 'warn'],
+    recommendation: 'Generated from an alternate internal quote posture after review',
     note: 'Primary recommendation remains available at higher confidence.',
     primary: 'Share alternate quote',
     canApprove: true,
@@ -70,25 +70,20 @@ export function CustomerQuotePage() {
 
   const quoteConfig = states[quoteState]
   const recommendation = scenarioRecommendations[scenario]
-  const selected = manufacturers.find((item) => item.id === recommendation.recommendedManufacturerId) ?? manufacturers[0]
-  const alternate = useMemo(() => manufacturers.find((item) => item.id !== selected.id) ?? manufacturers[1], [selected])
-
-  const priceTotal = scenario === 'margin' ? 179200 : 186400
-  const unitPrice = scenario === 'margin' ? 71.68 : scenario === 'logistics' ? 73.12 : 74.56
-  const leadTimeDays = scenario === 'margin' ? 23 : scenario === 'logistics' ? 19 : 18
+  const alternateScenario = scenario === 'balanced' ? scenarioRecommendations.schedule : scenarioRecommendations.balanced
 
   return (
     <>
       <div className="topbar">
         <div className="topbar-left">
-          <strong>Present</strong>
+          <strong>Quote Delivery</strong>
           <span className="badge badge-success">{quoteConfig.badge}</span>
         </div>
         <div className="topbar-right">MQI System</div>
       </div>
 
       <div className="content">
-        <WorkflowProgress label="Present" />
+        <WorkflowProgress label="8. Quote Delivery" />
 
         <h1>Customer quote</h1>
         <div className="intro">Customer-facing output generated from the approved recommendation.</div>
@@ -127,12 +122,12 @@ export function CustomerQuotePage() {
             <div className="quote-head">
               <div>
                 <h2 className="quote-title">{orderSummary.part}</h2>
-                <div className="sub">{selected.name} · {orderSummary.quantity.toLocaleString()} units · Valid 14 days</div>
+                <div className="sub">{orderSummary.manufacturer} · {orderSummary.quantity.toLocaleString()} units · Valid 14 days</div>
                 <div className="sub">{quoteConfig.meta}</div>
               </div>
               <div>
-                <div className="quote-price">${priceTotal.toLocaleString()}</div>
-                <div className="sub">Unit price: ${unitPrice.toFixed(2)} · Lead time: {leadTimeDays} days</div>
+                <div className="quote-price">${recommendation.quoteTotalUsd.toLocaleString()}</div>
+                <div className="sub">Unit price: ${recommendation.pricePerUnitUsd.toFixed(2)} · Lead time: {recommendation.leadTimeDays} days</div>
               </div>
             </div>
 
@@ -143,14 +138,14 @@ export function CustomerQuotePage() {
 
             <div className="grid quote-grid">
               <div className="card"><span className="k">Scope</span><span>{orderSummary.material} · {orderSummary.finish} · {orderSummary.packaging}</span></div>
-              <div className="card"><span className="k">Recommended path</span><span>{quoteConfig.recommendation}: {selected.name}</span></div>
+              <div className="card"><span className="k">Recommended path</span><span>{quoteConfig.recommendation}: {recommendation.posture}</span></div>
               <div className="card"><span className="k">Commercial note</span><span>{quoteConfig.note}</span></div>
-              <div className="card"><span className="k">Alternate</span><span>{alternate.name} remains available with {alternate.marginPct}% margin and {alternate.leadTimeDays}-day lead time.</span></div>
+              <div className="card"><span className="k">Alternate posture</span><span>{alternateScenario.posture} remains available at ${alternateScenario.pricePerUnitUsd.toFixed(2)} / unit with a {alternateScenario.leadTimeDays}-day commitment.</span></div>
             </div>
 
             <div className="actions">
               <a className="btn primary" href="#" style={{ pointerEvents: quoteConfig.canApprove ? 'auto' : 'none', opacity: quoteConfig.canApprove ? '1' : '.45' }}>{quoteConfig.primary}</a>
-              <Link className="btn secondary" to="/recommendation-workspace">Back to recommendation</Link>
+              <Link className="btn secondary" to="/quote-recommendation">Back to recommendation</Link>
             </div>
           </div>
         </section>

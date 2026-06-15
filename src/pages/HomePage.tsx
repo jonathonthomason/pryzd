@@ -20,8 +20,8 @@ export function HomePage() {
           <span>Home</span>
         </div>
 
-        <h1>Manufacturing Decision Intelligence</h1>
-        <div className="intro intro-home">Fast capture. Better manufacturing decisions. Quote output when the recommendation is sound.</div>
+        <h1>Production Readiness Intelligence</h1>
+        <div className="intro intro-home">Turn one manufacturer’s live constraints into a quote you can defend: evidence, confidence, assumptions, risks, recommendation.</div>
 
         <div className="layout home-layout">
           <section className="panel">
@@ -32,7 +32,7 @@ export function HomePage() {
               <div className="stats stats-3">
                 <div className="metric">
                   <span className="k">Primary task</span>
-                  <div className="v">Best path selection</div>
+                  <div className="v">Quote confidence and readiness</div>
                 </div>
                 <div className="metric">
                   <span className="k">Margin target</span>
@@ -45,11 +45,11 @@ export function HomePage() {
               </div>
 
               <div className="cards">
-                <div className="card"><h3>Capture</h3><p>Upload source material. Draft the request.</p></div>
-                <div className="card"><h3>Confirm</h3><p>Resolve blockers. Confirm the normalized order.</p></div>
-                <div className="card"><h3>Manufacturer Evaluation</h3><p>Watch the system evaluate suppliers, cost, timing, and risk.</p></div>
-                <div className="card"><h3>Recommendation Workspace</h3><p>Review the best manufacturing path and approve the recommendation.</p></div>
-                <div className="card"><h3>Present</h3><p>Generate the customer-facing quote from the approved recommendation.</p></div>
+                <div className="card"><h3>1. RFQ Intake</h3><p>Upload the source package and capture the request.</p></div>
+                <div className="card"><h3>2–3. Requirements Understanding + Review</h3><p>Normalize the request, surface uncertainty, and confirm assumptions.</p></div>
+                <div className="card"><h3>4. Production Readiness Analysis</h3><p>Check one manufacturer’s material, capacity, quality, timing, and fulfillment posture.</p></div>
+                <div className="card"><h3>5–7. Commercial Analysis + Recommendation + Review</h3><p>Turn readiness into a volatility-aware quote recommendation with evidence and risk.</p></div>
+                <div className="card"><h3>8. Quote Delivery</h3><p>Generate the customer-facing quote from the approved recommendation.</p></div>
               </div>
 
               <div className="home-resource-grid">
@@ -83,11 +83,11 @@ export function HomePage() {
             </div>
             <div className="panel-body">
               <div className="list">
-                <div className="listrow"><span>Capture</span><strong>Ready</strong></div>
-                <div className="listrow"><span>Confirm</span><strong>Ready</strong></div>
-                <div className="listrow"><span>Manufacturer Evaluation</span><strong>Ready</strong></div>
-                <div className="listrow"><span>Recommendation Workspace</span><strong>Ready</strong></div>
-                <div className="listrow"><span>Present</span><strong>Ready</strong></div>
+                <div className="listrow"><span>1. RFQ Intake</span><strong>Ready</strong></div>
+                <div className="listrow"><span>2–3. Requirements Understanding + Review</span><strong>Ready</strong></div>
+                <div className="listrow"><span>4. Production Readiness Analysis</span><strong>Ready</strong></div>
+                <div className="listrow"><span>5–7. Commercial Analysis + Recommendation + Review</span><strong>Ready</strong></div>
+                <div className="listrow"><span>8. Quote Delivery</span><strong>Ready</strong></div>
               </div>
             </div>
           </aside>

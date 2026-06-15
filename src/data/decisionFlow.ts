@@ -1,8 +1,9 @@
-export type DecisionScenario = 'balanced' | 'margin' | 'logistics'
+export type DecisionScenario = 'balanced' | 'margin' | 'schedule'
 
 export const orderSummary = {
   orderId: 'RFQ-2026-0614',
   customer: 'Northstar Retail Fixtures',
+  manufacturer: 'North Ridge Manufacturing',
   part: 'CNC Housing Rev B',
   quantity: 2500,
   destination: 'Atlanta, GA',
@@ -13,172 +14,123 @@ export const orderSummary = {
   packaging: 'Reseller-label-ready',
 }
 
-export const evaluationSteps = [
+export const readinessDimensions = [
   {
-    label: 'Requirements normalized',
-    note: 'Material, finish, tolerance, packaging, and alternates locked for comparison.',
+    label: 'Material readiness',
+    note: 'Usable stock is already allocated for this quote window.',
   },
   {
-    label: 'Manufacturing capabilities matched',
-    note: 'Three manufacturers qualified. One domestic option excluded for finish-slot mismatch.',
+    label: 'Capacity readiness',
+    note: 'The production slot can support the requested quantity without escalation.',
   },
   {
-    label: 'Material availability analyzed',
-    note: 'North Ridge confirmed stock; Monterrey reserved allocation; Pearl River available with replenishment exposure.',
+    label: 'Lead-time readiness',
+    note: 'The current plan can meet or closely protect the requested delivery target.',
   },
   {
-    label: 'Capacity evaluated',
-    note: 'North Ridge holds the strongest start window and best schedule buffer.',
+    label: 'Quality readiness',
+    note: 'Known process controls and part-family history support a stable run.',
   },
   {
-    label: 'Lead times evaluated',
-    note: '18-day domestic path leads. Mexico remains viable at 23 days. China slips to 32 days.',
-  },
-  {
-    label: 'Shipping constraints evaluated',
-    note: 'Domestic route contains logistics volatility better than cross-border and ocean options.',
-  },
-  {
-    label: 'Margin targets evaluated',
-    note: 'All three paths can clear 50%, but economics alone do not determine the recommendation.',
-  },
-  {
-    label: 'Quality history evaluated',
-    note: 'North Ridge has the strongest quality stability for this part family.',
-  },
-  {
-    label: 'Commercial risk assessed',
-    note: 'Mexico carries thinner schedule buffer. China increases commitment risk despite stronger margin.',
-  },
-  {
-    label: 'Recommendation generated',
-    note: 'North Ridge selected as the strongest manufacturing decision for this order.',
-  },
-] as const
-
-export const manufacturers = [
-  {
-    id: 'MFG-NRM-001',
-    name: 'North Ridge Manufacturing',
-    region: 'Illinois, USA',
-    leadTimeDays: 18,
-    marginPct: 52.1,
-    risk: 'Low',
-    confidencePct: 92,
-    inventory: 'Confirmed',
-    capacity: 'Available',
-    quality: 'Strong',
-    logisticsRisk: 'Contained',
-    commercialRisk: 'Low',
-    rationale: 'Best combined delivery, quality, and commercial posture.',
-  },
-  {
-    id: 'MFG-MEX-014',
-    name: 'Monterrey Precision Works',
-    region: 'Nuevo León, Mexico',
-    leadTimeDays: 23,
-    marginPct: 54.4,
-    risk: 'Moderate',
-    confidencePct: 85,
-    inventory: 'Reserved',
-    capacity: 'Tight',
-    quality: 'Acceptable',
-    logisticsRisk: 'Moderate',
-    commercialRisk: 'Moderate',
-    rationale: 'Higher margin with weaker schedule buffer and more coordination risk.',
-  },
-  {
-    id: 'MFG-CHN-032',
-    name: 'Pearl River Components',
-    region: 'Shenzhen, China',
-    leadTimeDays: 32,
-    marginPct: 58.8,
-    risk: 'High',
-    confidencePct: 78,
-    inventory: 'Available',
-    capacity: 'Available',
-    quality: 'Acceptable',
-    logisticsRisk: 'High',
-    commercialRisk: 'High',
-    rationale: 'Highest margin, but long transit and logistics variability weaken commitment confidence.',
+    label: 'Commercial readiness',
+    note: 'Margin, assumptions, and exception posture are visible before quoting.',
   },
 ] as const
 
 export const scenarioRecommendations: Record<DecisionScenario, {
   label: string
   badge: string
-  recommendedManufacturerId: string
+  posture: string
   headline: string
+  quoteConfidencePct: number
+  fulfillmentReadinessPct: number
+  pricePerUnitUsd: number
+  quoteTotalUsd: number
+  leadTimeDays: number
   why: string[]
   businessImpact: string[]
   tradeoffs: string[]
   risks: string[]
+  assumptions: string[]
   humanDecision: string
   signalChips: Array<{ label: string; tone: 'good' | 'warn' }>
-  trustSignalOverrides?: Partial<Record<'Inventory' | 'Capacity' | 'Lead time' | 'Quality history' | 'Margin' | 'Commercial risk' | 'Logistics risk', { value: string; tone: 'good' | 'warn' }>>
+  trustSignalOverrides?: Partial<Record<'Inventory' | 'Capacity' | 'Lead time' | 'Quality history' | 'Margin' | 'Commercial risk' | 'Fulfillment readiness', { value: string; tone: 'good' | 'warn' }>>
 }> = {
   balanced: {
-    label: 'Balanced recommendation',
+    label: 'Confidence-first recommendation',
     badge: 'High confidence',
-    recommendedManufacturerId: 'MFG-NRM-001',
-    headline: 'Best overall manufacturing path for delivery confidence and commercial fit.',
-    why: ['Inventory confirmed', 'Capacity available', 'Meets delivery target', 'Maintains target margin', 'Strong quality history', 'Lowest commercial risk'],
-    businessImpact: ['Protects delivery commitment', 'Preserves target margin', 'Minimizes escalation risk'],
-    tradeoffs: ['Not the highest-margin path available', 'Uses the current domestic slot', 'Leaves less upside than a slower offshore option'],
-    risks: ['Domestic slot should be approved in the current cycle to protect timing.', 'Expedite remains available but would compress margin if the schedule slips.'],
-    humanDecision: 'Approve the recommendation if delivery confidence matters more than incremental margin expansion.',
+    posture: 'Confidence-first quote posture',
+    headline: 'Recommend quoting now: the order is production-ready, commercially sound, and supported by clear evidence.',
+    quoteConfidencePct: 94,
+    fulfillmentReadinessPct: 93,
+    pricePerUnitUsd: 74.56,
+    quoteTotalUsd: 186400,
+    leadTimeDays: 18,
+    why: ['Material allocation confirmed', 'Capacity slot available', 'Requested delivery target is supportable', 'Margin remains above target', 'Quality history is stable', 'Commercial assumptions are explicit'],
+    businessImpact: ['Lets sales respond quickly without overstating certainty', 'Protects delivery credibility while staying above margin target', 'Reduces avoidable exception handling before send'],
+    tradeoffs: ['Leaves less upside than a more aggressive price posture', 'Assumes the current slot is held in this quote cycle'],
+    risks: ['If the customer delays approval, lead time should be revalidated before send.'],
+    assumptions: ['Approved alternate finish path is allowed if capacity tightens.', 'No packaging changes beyond reseller-label-ready handling.'],
+    humanDecision: 'Approve if the goal is a fast quote with strong production and commercial confidence.',
     signalChips: [
-      { label: 'High confidence', tone: 'good' },
+      { label: 'Quote confidence high', tone: 'good' },
       { label: 'Margin above target', tone: 'good' },
-      { label: 'Strong quality history', tone: 'good' },
-      { label: 'Low commercial risk', tone: 'good' },
+      { label: 'Fulfillment readiness strong', tone: 'good' },
+      { label: 'Assumptions visible', tone: 'good' },
     ],
   },
   margin: {
-    label: 'Margin-weighted recommendation',
+    label: 'Margin-protect recommendation',
     badge: 'Tradeoff visible',
-    recommendedManufacturerId: 'MFG-MEX-014',
-    headline: 'Margin-leading option is viable, but it introduces a thinner schedule buffer.',
-    why: ['Maintains margin above target', 'Inventory allocation is held', 'Commercial upside exceeds domestic path', 'Quality record remains acceptable'],
-    businessImpact: ['Improves gross margin buffer', 'Retains a viable delivery plan', 'Introduces tighter schedule management'],
-    tradeoffs: ['Weaker schedule buffer than North Ridge', 'More coordination required to stay on commitment', 'Slightly higher escalation exposure'],
-    risks: ['The recommendation is viable, but the schedule buffer is thinner.', 'Late supplier confirmation would force a re-check of the delivery promise.'],
-    humanDecision: 'Approve if margin expansion is the priority and the team accepts a thinner timing buffer.',
+    posture: 'Margin-protect quote posture',
+    headline: 'Quote with a stronger price buffer when margin protection matters more than maximizing close probability.',
+    quoteConfidencePct: 88,
+    fulfillmentReadinessPct: 90,
+    pricePerUnitUsd: 76.18,
+    quoteTotalUsd: 190450,
+    leadTimeDays: 18,
+    why: ['Keeps the same production plan intact', 'Builds more margin headroom into the quote', 'Still preserves a credible delivery commitment'],
+    businessImpact: ['Improves gross margin protection', 'Keeps fulfillment posture stable', 'Gives sales a safer floor under input volatility'],
+    tradeoffs: ['Higher price may reduce competitiveness', 'Commercial risk shifts from fulfillment to acceptance sensitivity'],
+    risks: ['Customer price pushback is more likely if competitive pressure is high.'],
+    assumptions: ['The account can tolerate a firmer commercial posture.', 'No special concession is required to win the order.'],
+    humanDecision: 'Approve if protecting margin matters more than offering the most competitive price.',
     signalChips: [
-      { label: 'High margin', tone: 'good' },
-      { label: 'Thin schedule buffer', tone: 'warn' },
-      { label: 'Moderate logistics risk', tone: 'warn' },
-      { label: 'Viable alternate path', tone: 'good' },
+      { label: 'Margin buffer stronger', tone: 'good' },
+      { label: 'Acceptance sensitivity higher', tone: 'warn' },
+      { label: 'Production plan unchanged', tone: 'good' },
+      { label: 'Commercial tradeoff explicit', tone: 'warn' },
     ],
     trustSignalOverrides: {
-      Inventory: { value: 'Reserved', tone: 'good' },
-      Capacity: { value: 'Available with narrower window', tone: 'warn' },
-      'Lead time': { value: '23-day fit', tone: 'warn' },
-      Margin: { value: '54.4%', tone: 'good' },
+      Margin: { value: '52.8%', tone: 'good' },
       'Commercial risk': { value: 'Moderate', tone: 'warn' },
-      'Logistics risk': { value: 'Moderate', tone: 'warn' },
     },
   },
-  logistics: {
-    label: 'Logistics-sensitive recommendation',
-    badge: 'Risk contained',
-    recommendedManufacturerId: 'MFG-NRM-001',
-    headline: 'Recommendation favors delivery reliability under logistics sensitivity.',
-    why: ['Reduces logistics uncertainty', 'Protects delivery commitment', 'Keeps margin above threshold', 'Avoids commercial exposure from transit variability'],
-    businessImpact: ['Stabilizes customer promise', 'Limits exception handling', 'Preserves approval confidence'],
-    tradeoffs: ['Slightly lower margin than offshore alternatives', 'Less optionality if capacity tightens later'],
-    risks: ['If domestic capacity shifts, the recommendation should be rerun immediately.'],
-    humanDecision: 'Approve if schedule confidence and low logistics volatility matter most for this order.',
+  schedule: {
+    label: 'Commitment-safe recommendation',
+    badge: 'Fulfillment safe',
+    posture: 'Commitment-safe quote posture',
+    headline: 'Quote with a slightly more conservative promise date to preserve delivery confidence under volatility.',
+    quoteConfidencePct: 92,
+    fulfillmentReadinessPct: 96,
+    pricePerUnitUsd: 75.22,
+    quoteTotalUsd: 188050,
+    leadTimeDays: 19,
+    why: ['Adds schedule protection while staying commercially viable', 'Reduces fulfillment risk if upstream timing moves', 'Keeps assumptions and promise date aligned'],
+    businessImpact: ['Improves promise reliability', 'Reduces late-stage firefighting', 'Supports a more defensible customer commitment'],
+    tradeoffs: ['Slightly slower lead time than the confidence-first posture', 'May be less attractive if the customer is schedule-sensitive'],
+    risks: ['The customer may challenge the extra day if the request is highly time-sensitive.'],
+    assumptions: ['A one-day buffer is acceptable to the customer if explained upfront.', 'Production slot remains held through quote review.'],
+    humanDecision: 'Approve if delivery credibility matters more than quoting the most aggressive timeline.',
     signalChips: [
-      { label: 'Low logistics risk', tone: 'good' },
-      { label: 'Schedule protected', tone: 'good' },
-      { label: 'Margin still on target', tone: 'good' },
-      { label: 'Less optionality later', tone: 'warn' },
+      { label: 'Fulfillment readiness strongest', tone: 'good' },
+      { label: 'Promise date more conservative', tone: 'warn' },
+      { label: 'Quote confidence high', tone: 'good' },
+      { label: 'Volatility-aware', tone: 'good' },
     ],
     trustSignalOverrides: {
-      'Lead time': { value: '19-day fit', tone: 'good' },
-      Margin: { value: '51.3%', tone: 'good' },
-      'Logistics risk': { value: 'Low', tone: 'good' },
+      'Lead time': { value: '19-day protected fit', tone: 'good' },
+      'Fulfillment readiness': { value: '96%', tone: 'good' },
     },
   },
 }

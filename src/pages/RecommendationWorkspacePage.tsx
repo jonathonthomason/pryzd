@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { WorkflowProgress } from '../components/WorkflowProgress'
-import { manufacturers, orderSummary, scenarioRecommendations, type DecisionScenario } from '../data/decisionFlow'
+import { orderSummary, scenarioRecommendations, type DecisionScenario } from '../data/decisionFlow'
 
 type DecisionFactor = {
   label: string
@@ -11,7 +11,6 @@ type DecisionFactor = {
 type RationaleBar = {
   label: string
   score: number
-  tone: 'good' | 'warn'
 }
 
 type TrustSignal = {
@@ -49,128 +48,122 @@ function scoreBar(score: number) {
 function getDecisionFactors(view: DecisionScenario): DecisionFactor[] {
   if (view === 'margin') {
     return [
-      { label: 'Delivery Reliability', score: 8.1 },
-      { label: 'Margin Achievement', score: 9.4 },
-      { label: 'Inventory Confidence', score: 8.9 },
-      { label: 'Capacity Confidence', score: 8.2 },
-      { label: 'Quality Stability', score: 8.4 },
-      { label: 'Commercial Risk', score: 7.9 },
+      { label: 'Quote Confidence', score: 8.8 },
+      { label: 'Margin Protection', score: 9.5 },
+      { label: 'Fulfillment Readiness', score: 9.0 },
+      { label: 'Commercial Competitiveness', score: 7.4 },
+      { label: 'Volatility Awareness', score: 8.7 },
+      { label: 'Decision Transparency', score: 9.1 },
     ]
   }
 
-  if (view === 'logistics') {
+  if (view === 'schedule') {
     return [
-      { label: 'Delivery Reliability', score: 9.5 },
-      { label: 'Margin Achievement', score: 8.5 },
-      { label: 'Inventory Confidence', score: 9.6 },
-      { label: 'Capacity Confidence', score: 9.0 },
-      { label: 'Quality Stability', score: 9.4 },
-      { label: 'Commercial Risk', score: 9.1 },
+      { label: 'Quote Confidence', score: 9.2 },
+      { label: 'Margin Protection', score: 8.7 },
+      { label: 'Fulfillment Readiness', score: 9.7 },
+      { label: 'Commercial Competitiveness', score: 8.0 },
+      { label: 'Volatility Awareness', score: 9.6 },
+      { label: 'Decision Transparency', score: 9.2 },
     ]
   }
 
   return [
-    { label: 'Delivery Reliability', score: 9.4 },
-    { label: 'Margin Achievement', score: 8.8 },
-    { label: 'Inventory Confidence', score: 9.7 },
-    { label: 'Capacity Confidence', score: 9.1 },
-    { label: 'Quality Stability', score: 9.5 },
-    { label: 'Commercial Risk', score: 8.9 },
+    { label: 'Quote Confidence', score: 9.4 },
+    { label: 'Margin Protection', score: 8.9 },
+    { label: 'Fulfillment Readiness', score: 9.3 },
+    { label: 'Commercial Competitiveness', score: 8.5 },
+    { label: 'Volatility Awareness', score: 9.0 },
+    { label: 'Decision Transparency', score: 9.4 },
   ]
 }
 
 function getRationaleBars(view: DecisionScenario): RationaleBar[] {
   if (view === 'margin') {
     return [
-      { label: 'Delivery Confidence', score: 8, tone: 'warn' },
-      { label: 'Margin Performance', score: 9, tone: 'good' },
-      { label: 'Risk Exposure', score: 4, tone: 'warn' },
+      { label: 'Quote confidence', score: 9 },
+      { label: 'Margin protection', score: 10 },
+      { label: 'Customer competitiveness', score: 7 },
     ]
   }
 
-  if (view === 'logistics') {
+  if (view === 'schedule') {
     return [
-      { label: 'Delivery Confidence', score: 10, tone: 'good' },
-      { label: 'Margin Performance', score: 8, tone: 'good' },
-      { label: 'Risk Exposure', score: 2, tone: 'good' },
+      { label: 'Quote confidence', score: 9 },
+      { label: 'Fulfillment readiness', score: 10 },
+      { label: 'Promise aggressiveness', score: 7 },
     ]
   }
 
   return [
-    { label: 'Delivery Confidence', score: 9, tone: 'good' },
-    { label: 'Margin Performance', score: 8, tone: 'good' },
-    { label: 'Risk Exposure', score: 2, tone: 'good' },
+    { label: 'Quote confidence', score: 9 },
+    { label: 'Fulfillment readiness', score: 9 },
+    { label: 'Commercial balance', score: 8 },
   ]
 }
 
-function compareLabel(selectedValue: string | number, altValue: string | number, preferHigher = true) {
-  if (typeof selectedValue === 'number' && typeof altValue === 'number') {
-    const diff = preferHigher ? selectedValue - altValue : altValue - selectedValue
-    if (Math.abs(diff) < 0.2) return 'Near parity'
-    return diff > 0 ? 'North Ridge leads' : 'Alternative leads'
-  }
-
-  return selectedValue === altValue ? 'Comparable' : 'North Ridge stronger'
+function compareLabel(selectedValue: number, altValue: number, higherIsBetter = true) {
+  const diff = higherIsBetter ? selectedValue - altValue : altValue - selectedValue
+  if (Math.abs(diff) < 0.2) return 'Near parity'
+  return diff > 0 ? 'Recommended posture leads' : 'Alternate posture leads'
 }
 
 export function RecommendationWorkspacePage() {
   const [view, setView] = useState<DecisionScenario>('balanced')
 
   const recommendation = scenarioRecommendations[view]
-  const selected = manufacturers.find((item) => item.id === recommendation.recommendedManufacturerId) ?? manufacturers[0]
-  const alternatives = manufacturers.filter((item) => item.id !== selected.id)
+  const alternatives = (Object.entries(scenarioRecommendations) as [DecisionScenario, typeof recommendation][]).filter(([name]) => name !== view)
   const decisionFactors = useMemo(() => getDecisionFactors(view), [view])
   const rationaleBars = useMemo(() => getRationaleBars(view), [view])
 
   const trustSignals = useMemo<TrustSignal[]>(() => {
     const signalTooltips: Record<string, string> = {
-      Inventory: 'Scores usable on-hand or reserved material higher, with penalties for replenishment timing uncertainty.',
-      Capacity: 'Scores available production headroom higher based on fit within the required manufacturing window.',
-      'Lead time': 'Scores against the requested delivery target, with shorter and more reliable paths receiving higher marks.',
-      'Quality history': 'Scores historical quality consistency and repeatability higher when defect and escalation risk are lower.',
-      Margin: 'Scores margin performance against the target threshold, with stronger buffer above target increasing the score.',
-      'Commercial risk': 'Scores lower exposure higher by weighing pricing stability, commitment confidence, and exception risk.',
-      'Logistics risk': 'Scores lower shipping and transit volatility higher, with stable lanes and fewer handoff risks favored.',
+      Inventory: 'Shows whether material allocation is already in place for this quote window.',
+      Capacity: 'Shows whether the current production slot can support the order without escalation.',
+      'Lead time': 'Shows how well the current quote posture matches the requested commitment date.',
+      'Quality history': 'Shows whether this part family has stable process history and low exception risk.',
+      Margin: 'Shows margin performance relative to the target threshold.',
+      'Commercial risk': 'Shows exposure to acceptance, exception, or repricing risk.',
+      'Fulfillment readiness': 'Shows how ready the manufacturer is to fulfill this quote as presented.',
     }
 
     const base = [
-      { label: 'Inventory', value: selected.inventory, tone: selected.inventory === 'Confirmed' ? 'good' as const : 'warn' as const, tooltip: signalTooltips.Inventory },
-      { label: 'Capacity', value: selected.capacity, tone: selected.capacity === 'Available' ? 'good' as const : 'warn' as const, tooltip: signalTooltips.Capacity },
-      { label: 'Lead time', value: `${selected.leadTimeDays}-day fit`, tone: selected.leadTimeDays <= 19 ? 'good' as const : 'warn' as const, tooltip: signalTooltips['Lead time'] },
-      { label: 'Quality history', value: selected.quality, tone: selected.quality === 'Strong' ? 'good' as const : 'warn' as const, tooltip: signalTooltips['Quality history'] },
-      { label: 'Margin', value: `${selected.marginPct}%`, tone: selected.marginPct >= orderSummary.targetMarginPct ? 'good' as const : 'warn' as const, tooltip: signalTooltips.Margin },
-      { label: 'Commercial risk', value: selected.commercialRisk, tone: selected.commercialRisk.toLowerCase() === 'low' ? 'good' as const : 'warn' as const, tooltip: signalTooltips['Commercial risk'] },
-      { label: 'Logistics risk', value: selected.logisticsRisk, tone: ['contained', 'low'].includes(selected.logisticsRisk.toLowerCase()) ? 'good' as const : 'warn' as const, tooltip: signalTooltips['Logistics risk'] },
+      { label: 'Inventory', value: 'Allocated', tone: 'good' as const, tooltip: signalTooltips.Inventory },
+      { label: 'Capacity', value: 'Slot available', tone: 'good' as const, tooltip: signalTooltips.Capacity },
+      { label: 'Lead time', value: `${recommendation.leadTimeDays}-day fit`, tone: recommendation.leadTimeDays <= 19 ? 'good' as const : 'warn' as const, tooltip: signalTooltips['Lead time'] },
+      { label: 'Quality history', value: 'Stable', tone: 'good' as const, tooltip: signalTooltips['Quality history'] },
+      { label: 'Margin', value: view === 'margin' ? '52.8%' : view === 'schedule' ? '51.1%' : '51.4%', tone: 'good' as const, tooltip: signalTooltips.Margin },
+      { label: 'Commercial risk', value: view === 'margin' ? 'Moderate' : 'Low', tone: view === 'margin' ? 'warn' as const : 'good' as const, tooltip: signalTooltips['Commercial risk'] },
+      { label: 'Fulfillment readiness', value: `${recommendation.fulfillmentReadinessPct}%`, tone: recommendation.fulfillmentReadinessPct >= 92 ? 'good' as const : 'warn' as const, tooltip: signalTooltips['Fulfillment readiness'] },
     ]
 
     return base.map((item) => {
       const override = recommendation.trustSignalOverrides?.[item.label as keyof typeof recommendation.trustSignalOverrides]
       return override ? { ...item, ...override } : item
     })
-  }, [recommendation, selected])
+  }, [recommendation, view])
 
-  const isLowRisk = selected.risk.toLowerCase() === 'low'
-  const recommendationSignal: readonly [string, string, string] = ['Recommended path', `${selected.name} selected`, isLowRisk ? 'good' : 'warn']
-  const decisionSignal: readonly [string, string, string] = ['Human decision', recommendation.humanDecision, isLowRisk ? 'good' : 'warn']
+  const recommendationSignal: readonly [string, string, string] = ['Recommended posture', recommendation.posture, recommendation.quoteConfidencePct >= 90 ? 'good' : 'warn']
+  const decisionSignal: readonly [string, string, string] = ['Human decision', recommendation.humanDecision, recommendation.quoteConfidencePct >= 90 ? 'good' : 'warn']
 
   return (
     <>
       <div className="topbar">
         <div className="topbar-left">
-          <strong>Recommendation Workspace</strong>
+          <strong>Quote Recommendation</strong>
           <span className="badge">{recommendation.badge}</span>
         </div>
         <div className="topbar-right">MQI System</div>
       </div>
 
       <div className="content">
-        <WorkflowProgress label="Recommendation Workspace" />
+        <WorkflowProgress label="5–7. Commercial Analysis + Recommendation + Review" />
 
-        <h1>Decision Workspace</h1>
-        <div className="intro">Understand why the leading manufacturer won, where the recommendation is strongest, and how the alternatives fall short against the same commercial criteria.</div>
+        <h1>Commercial analysis + quote recommendation</h1>
+        <div className="intro">Turn production readiness into a quote recommendation with findings, evidence, confidence, assumptions, risks, and a clear human approval step.</div>
 
         <div className="state-toolbar">
-          <span className="toolbar-label">Decision posture</span>
+          <span className="toolbar-label">Quote posture</span>
           {(Object.entries(scenarioRecommendations) as [DecisionScenario, typeof recommendation][]).map(([name, config]) => (
             <button
               key={name}
@@ -185,28 +178,28 @@ export function RecommendationWorkspacePage() {
 
         <div className="layout workspace-layout recommendation-layout">
           <section className="panel">
-            <div className="panel-header"><div className="panel-title">Why {selected.name} won</div></div>
+            <div className="panel-header"><div className="panel-title">Why this quote posture is recommended</div></div>
             <div className="panel-body recommendation-panel-body">
               <div className="workspace-stats recommendation-snapshot-card">
                 <div className="recommendation-snapshot-metric recommendation-snapshot-primary">
-                  <span className="k">Recommended manufacturer</span>
-                  <div className="v workspace-path">{selected.name}</div>
+                  <span className="k">Recommended posture</span>
+                  <div className="v workspace-path">{recommendation.posture}</div>
                 </div>
                 <div className="recommendation-snapshot-metric">
-                  <span className="k">Confidence score</span>
-                  <div className="v">{selected.confidencePct}%</div>
+                  <span className="k">Quote confidence</span>
+                  <div className="v">{recommendation.quoteConfidencePct}%</div>
+                </div>
+                <div className="recommendation-snapshot-metric">
+                  <span className="k">Fulfillment readiness</span>
+                  <div className="v">{recommendation.fulfillmentReadinessPct}%</div>
                 </div>
                 <div className="recommendation-snapshot-metric">
                   <span className="k">Lead</span>
-                  <div className="v">{selected.leadTimeDays} days</div>
+                  <div className="v">{recommendation.leadTimeDays} days</div>
                 </div>
                 <div className="recommendation-snapshot-metric">
-                  <span className="k">Margin</span>
-                  <div className="v">{selected.marginPct}%</div>
-                </div>
-                <div className="recommendation-snapshot-metric">
-                  <span className="k">Risk</span>
-                  <div className="v">{selected.risk}</div>
+                  <span className="k">Price</span>
+                  <div className="v">${recommendation.pricePerUnitUsd.toFixed(2)}</div>
                 </div>
               </div>
 
@@ -241,7 +234,7 @@ export function RecommendationWorkspacePage() {
 
               <div className="workspace-section-grid recommendation-section-grid">
                 <div className="workspace-section">
-                  <h3>Why recommended</h3>
+                  <h3>Findings</h3>
                   <ul>
                     {recommendation.why.map((item) => <li key={item}>{item}</li>)}
                   </ul>
@@ -253,69 +246,69 @@ export function RecommendationWorkspacePage() {
                   </ul>
                 </div>
                 <div className="workspace-section">
-                  <h3>Tradeoffs</h3>
+                  <h3>Assumptions</h3>
                   <ul>
-                    {recommendation.tradeoffs.map((item) => <li key={item}>{item}</li>)}
+                    {recommendation.assumptions.map((item) => <li key={item}>{item}</li>)}
                   </ul>
                 </div>
                 <div className="workspace-section">
-                  <h3>Risks</h3>
+                  <h3>Risks + tradeoffs</h3>
                   <ul>
-                    {recommendation.risks.map((item) => <li key={item}>{item}</li>)}
+                    {[...recommendation.tradeoffs, ...recommendation.risks].map((item) => <li key={item}>{item}</li>)}
                   </ul>
                 </div>
               </div>
 
               <div className="recommendation-comparison-card">
-                <div className="confirm-section-title">Side-by-side alternatives</div>
+                <div className="confirm-section-title">Alternate quote postures</div>
                 <div className="winner-callout">
-                  <strong>Why {selected.name} won</strong>
-                  <span>It offers the best combined delivery reliability, inventory certainty, capacity confidence, and commercial stability for this order.</span>
+                  <strong>Why this posture won</strong>
+                  <span>It best balances quote confidence, fulfillment readiness, and commercial support for this exact order.</span>
                 </div>
                 <div className="comparison-grid">
                   <div className="comparison-column winner">
                     <div className="comparison-column-head">
-                      <strong>{selected.name}</strong>
-                      <span>{selected.region}</span>
+                      <strong>{recommendation.posture}</strong>
+                      <span>{recommendation.badge}</span>
                     </div>
-                    <div className="comparison-row"><span>Delivery</span><strong>{selected.leadTimeDays} days</strong></div>
-                    <div className="comparison-row"><span>Margin</span><strong>{selected.marginPct}%</strong></div>
-                    <div className="comparison-row"><span>Inventory</span><strong>{selected.inventory}</strong></div>
-                    <div className="comparison-row"><span>Capacity</span><strong>{selected.capacity}</strong></div>
-                    <div className="comparison-row"><span>Quality</span><strong>{selected.quality}</strong></div>
-                    <div className="comparison-row"><span>Commercial risk</span><strong>{selected.commercialRisk}</strong></div>
+                    <div className="comparison-row"><span>Lead</span><strong>{recommendation.leadTimeDays} days</strong></div>
+                    <div className="comparison-row"><span>Unit price</span><strong>${recommendation.pricePerUnitUsd.toFixed(2)}</strong></div>
+                    <div className="comparison-row"><span>Quote confidence</span><strong>{recommendation.quoteConfidencePct}%</strong></div>
+                    <div className="comparison-row"><span>Fulfillment readiness</span><strong>{recommendation.fulfillmentReadinessPct}%</strong></div>
+                    <div className="comparison-row"><span>Commercial posture</span><strong>{view === 'margin' ? 'Margin-forward' : view === 'schedule' ? 'Volatility-aware' : 'Balanced'}</strong></div>
+                    <div className="comparison-row"><span>Risk</span><strong>{view === 'margin' ? 'Acceptance sensitivity' : view === 'schedule' ? 'Longer promise' : 'Low'}</strong></div>
                   </div>
 
-                  {alternatives.map((alt) => (
-                    <div key={alt.id} className="comparison-column">
+                  {alternatives.map(([name, alt]) => (
+                    <div key={name} className="comparison-column">
                       <div className="comparison-column-head">
-                        <strong>{alt.name}</strong>
-                        <span>{alt.region}</span>
+                        <strong>{alt.posture}</strong>
+                        <span>{alt.badge}</span>
                       </div>
-                      <div className="comparison-row"><span>Delivery</span><strong>{alt.leadTimeDays} days</strong><em>{compareLabel(selected.leadTimeDays, alt.leadTimeDays, false)}</em></div>
-                      <div className="comparison-row"><span>Margin</span><strong>{alt.marginPct}%</strong><em>{compareLabel(selected.marginPct, alt.marginPct, true)}</em></div>
-                      <div className="comparison-row"><span>Inventory</span><strong>{alt.inventory}</strong><em>{selected.inventory === 'Confirmed' && alt.inventory !== 'Confirmed' ? 'North Ridge stronger' : 'Comparable'}</em></div>
-                      <div className="comparison-row"><span>Capacity</span><strong>{alt.capacity}</strong><em>{selected.capacity === 'Available' && alt.capacity !== 'Available' ? 'North Ridge stronger' : 'Comparable'}</em></div>
-                      <div className="comparison-row"><span>Quality</span><strong>{alt.quality}</strong><em>{selected.quality === 'Strong' && alt.quality !== 'Strong' ? 'North Ridge stronger' : 'Comparable'}</em></div>
-                      <div className="comparison-row"><span>Commercial risk</span><strong>{alt.commercialRisk}</strong><em>{selected.commercialRisk === 'Low' && alt.commercialRisk !== 'Low' ? 'North Ridge safer' : 'Comparable'}</em></div>
+                      <div className="comparison-row"><span>Lead</span><strong>{alt.leadTimeDays} days</strong><em>{compareLabel(recommendation.leadTimeDays, alt.leadTimeDays, false)}</em></div>
+                      <div className="comparison-row"><span>Unit price</span><strong>${alt.pricePerUnitUsd.toFixed(2)}</strong><em>{compareLabel(recommendation.pricePerUnitUsd, alt.pricePerUnitUsd, false)}</em></div>
+                      <div className="comparison-row"><span>Quote confidence</span><strong>{alt.quoteConfidencePct}%</strong><em>{compareLabel(recommendation.quoteConfidencePct, alt.quoteConfidencePct, true)}</em></div>
+                      <div className="comparison-row"><span>Fulfillment readiness</span><strong>{alt.fulfillmentReadinessPct}%</strong><em>{compareLabel(recommendation.fulfillmentReadinessPct, alt.fulfillmentReadinessPct, true)}</em></div>
+                      <div className="comparison-row"><span>Commercial posture</span><strong>{name === 'margin' ? 'Margin-forward' : name === 'schedule' ? 'Volatility-aware' : 'Balanced'}</strong></div>
+                      <div className="comparison-row"><span>Tradeoff</span><strong>{alt.tradeoffs[0]}</strong></div>
                     </div>
                   ))}
                 </div>
               </div>
 
               <div className="decision-box recommendation-decision-box">
-                <strong>Human decision</strong>
+                <strong>Human review</strong>
                 <div className="decision-copy">{recommendation.humanDecision}</div>
                 <div className="decision-actions">
                   <button className="btn primary" type="button">Approve recommendation</button>
                   <button className="btn secondary" type="button">Revise assumptions</button>
-                  <button className="btn secondary" type="button">Compare alternatives</button>
+                  <button className="btn secondary" type="button">Reframe quote posture</button>
                 </div>
               </div>
 
               <div className="actions">
-                <Link className="btn primary" to="/customer-quote">Generate customer quote</Link>
-                <Link className="btn secondary" to="/manufacturer-evaluation">Back to evaluation</Link>
+                <Link className="btn primary" to="/quote-delivery">Generate customer quote</Link>
+                <Link className="btn secondary" to="/production-readiness-analysis">Back to readiness analysis</Link>
               </div>
             </div>
           </section>
@@ -346,11 +339,11 @@ export function RecommendationWorkspacePage() {
                 <SignalCard data={decisionSignal} />
                 <div className="state good">
                   <strong>Order context</strong>
-                  {orderSummary.customer} · {orderSummary.quantity.toLocaleString()} units · target margin {orderSummary.targetMarginPct}%+
+                  {orderSummary.customer} · {orderSummary.manufacturer} · {orderSummary.quantity.toLocaleString()} units · target margin {orderSummary.targetMarginPct}%+
                 </div>
                 <details className="trace">
                   <summary>System details</summary>
-                  <div className="trace-copy">Requirements confirmed → manufacturers evaluated → evidence ranked → recommendation prepared for human approval.</div>
+                  <div className="trace-copy">Requirements confirmed → production readiness analyzed → commercial tradeoffs scored → recommendation prepared for human approval.</div>
                 </details>
               </div>
             </div>
